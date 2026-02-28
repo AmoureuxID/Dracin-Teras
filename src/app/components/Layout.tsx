@@ -2,7 +2,7 @@ import { Link, Outlet, useNavigate } from 'react-router';
 import { Search, Home, Film, Tv, Menu, Clapperboard, BookOpen } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-const logoUrl = new URL('../../TERAS DRACIN LOGO.svg', import.meta.url).href;
+const logoUrl = new URL('../../logo-td.svg', import.meta.url).href;
 
 export function Layout() {
   const [searchQuery, setSearchQuery] = useState('');

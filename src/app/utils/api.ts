@@ -448,9 +448,9 @@ const MOCK_EPISODES: Episode[] = Array.from({ length: 24 }, (_, i) => ({
   videoUrl: `https://example.com/episode-${i + 1}.mp4`,
 }));
 
-export async function fetchDramaBoxVIP(): Promise<Drama[]> {
+export async function fetchDramaBoxVIP(page: number = 1): Promise<Drama[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/dramabox/vip`, {
+    const response = await fetch(`${API_BASE_URL}/dramabox/vip?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -462,9 +462,9 @@ export async function fetchDramaBoxVIP(): Promise<Drama[]> {
   }
 }
 
-export async function fetchDramaBoxTrending(): Promise<Drama[]> {
+export async function fetchDramaBoxTrending(page: number = 1): Promise<Drama[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/dramabox/trending`, {
+    const response = await fetch(`${API_BASE_URL}/dramabox/trending?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -476,9 +476,9 @@ export async function fetchDramaBoxTrending(): Promise<Drama[]> {
   }
 }
 
-export async function fetchDramaBoxLatest(): Promise<Drama[]> {
+export async function fetchDramaBoxLatest(page: number = 1): Promise<Drama[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/dramabox/latest`, {
+    const response = await fetch(`${API_BASE_URL}/dramabox/latest?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -504,9 +504,9 @@ export async function fetchDramaBoxRandom(): Promise<Drama[]> {
   }
 }
 
-export async function fetchDramaBoxForYou(): Promise<Drama[]> {
+export async function fetchDramaBoxForYou(page: number = 1): Promise<Drama[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/dramabox/foryou`, {
+    const response = await fetch(`${API_BASE_URL}/dramabox/foryou?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -786,7 +786,7 @@ export async function fetchKomikTop(): Promise<Komik[]> {
 
 export async function fetchKomikLatest(page: number = 1): Promise<Komik[]> {
   try {
-    const response = await fetch(`${COMIC_API_URL}/bacakomik/latest/${page}`, {
+    const response = await fetch(`${COMIC_API_URL}/bacakomik/latest?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -800,7 +800,7 @@ export async function fetchKomikLatest(page: number = 1): Promise<Komik[]> {
 
 export async function fetchKomikPopuler(page: number = 1): Promise<Komik[]> {
   try {
-    const response = await fetch(`${COMIC_API_URL}/bacakomik/populer/${page}`, {
+    const response = await fetch(`${COMIC_API_URL}/bacakomik/populer?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -837,7 +837,7 @@ export async function fetchKomikDetail(slug: string): Promise<KomikDetail | null
 
 export async function searchKomik(query: string, page: number = 1): Promise<Komik[]> {
   try {
-    const response = await fetch(`${COMIC_API_URL}/bacakomik/search/${query}?q=${encodeURIComponent(query)}&page=${page}`, {
+    const response = await fetch(`${COMIC_API_URL}/bacakomik/search/${encodeURIComponent(query)}?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -867,7 +867,7 @@ export async function fetchKomikGenres(): Promise<Genre[]> {
 // Get komik by genre
 export async function fetchKomikByGenre(genre: string, page: number = 1): Promise<Komik[]> {
   try {
-    const response = await fetch(`${COMIC_API_URL}/bacakomik/genre/${genre}/${page}`, {
+    const response = await fetch(`${COMIC_API_URL}/bacakomik/genre/${genre}?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -882,7 +882,7 @@ export async function fetchKomikByGenre(genre: string, page: number = 1): Promis
 // Get manga only
 export async function fetchKomikManga(page: number = 1): Promise<Komik[]> {
   try {
-    const response = await fetch(`${COMIC_API_URL}/bacakomik/only/manga/${page}`, {
+    const response = await fetch(`${COMIC_API_URL}/bacakomik/only/manga?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -897,7 +897,7 @@ export async function fetchKomikManga(page: number = 1): Promise<Komik[]> {
 // Get manhwa only
 export async function fetchKomikManhwa(page: number = 1): Promise<Komik[]> {
   try {
-    const response = await fetch(`${COMIC_API_URL}/bacakomik/only/manhwa/${page}`, {
+    const response = await fetch(`${COMIC_API_URL}/bacakomik/only/manhwa?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -912,7 +912,7 @@ export async function fetchKomikManhwa(page: number = 1): Promise<Komik[]> {
 // Get manhua only
 export async function fetchKomikManhua(page: number = 1): Promise<Komik[]> {
   try {
-    const response = await fetch(`${COMIC_API_URL}/bacakomik/only/manhua/${page}`, {
+    const response = await fetch(`${COMIC_API_URL}/bacakomik/only/manhua?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -927,7 +927,7 @@ export async function fetchKomikManhua(page: number = 1): Promise<Komik[]> {
 // Get komik berwarna
 export async function fetchKomikBerwarna(page: number = 1): Promise<Komik[]> {
   try {
-    const response = await fetch(`${COMIC_API_URL}/bacakomik/komikberwarna/${page}`, {
+    const response = await fetch(`${COMIC_API_URL}/bacakomik/komikberwarna?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -999,9 +999,9 @@ export async function searchReelShort(query: string, page: number = 1): Promise<
 
 // ==================== MELOLO API FUNCTIONS ====================
 
-export async function fetchMeloloLatest(): Promise<Drama[]> {
+export async function fetchMeloloLatest(page: number = 1): Promise<Drama[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/melolo/latest`, {
+    const response = await fetch(`${API_BASE_URL}/melolo/latest?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -1013,9 +1013,9 @@ export async function fetchMeloloLatest(): Promise<Drama[]> {
   }
 }
 
-export async function fetchMeloloTrending(): Promise<Drama[]> {
+export async function fetchMeloloTrending(page: number = 1): Promise<Drama[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/melolo/trending`, {
+    const response = await fetch(`${API_BASE_URL}/melolo/trending?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -1042,9 +1042,9 @@ export async function searchMelolo(query: string): Promise<Drama[]> {
 
 // ==================== FLICKREELS API FUNCTIONS ====================
 
-export async function fetchFlickReelsForYou(): Promise<Drama[]> {
+export async function fetchFlickReelsForYou(page: number = 1): Promise<Drama[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/flickreels/foryou`, {
+    const response = await fetch(`${API_BASE_URL}/flickreels/foryou?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -1056,9 +1056,9 @@ export async function fetchFlickReelsForYou(): Promise<Drama[]> {
   }
 }
 
-export async function fetchFlickReelsLatest(): Promise<Drama[]> {
+export async function fetchFlickReelsLatest(page: number = 1): Promise<Drama[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/flickreels/latest`, {
+    const response = await fetch(`${API_BASE_URL}/flickreels/latest?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -1099,9 +1099,9 @@ export async function searchFlickReels(query: string): Promise<Drama[]> {
 
 // ==================== FREEREELS API FUNCTIONS ====================
 
-export async function fetchFreeReelsForYou(): Promise<Drama[]> {
+export async function fetchFreeReelsForYou(page: number = 1): Promise<Drama[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/freereels/foryou`, {
+    const response = await fetch(`${API_BASE_URL}/freereels/foryou?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -1113,9 +1113,9 @@ export async function fetchFreeReelsForYou(): Promise<Drama[]> {
   }
 }
 
-export async function fetchFreeReelsHome() {
+export async function fetchFreeReelsHome(page: number = 1) {
   try {
-    const response = await fetch(`${API_BASE_URL}/freereels/home`, {
+    const response = await fetch(`${API_BASE_URL}/freereels/home?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');

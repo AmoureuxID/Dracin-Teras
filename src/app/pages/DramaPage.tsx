@@ -16,6 +16,15 @@ import {
   fetchNetShortTheaters,
   type Drama,
 } from '../utils/api';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '../components/ui/pagination';
 
 type Provider = 'dramabox' | 'reelshort' | 'melolo' | 'flickreels' | 'freereels' | 'netshort';
 
@@ -26,6 +35,7 @@ export function DramaPage() {
   const [activeCategory, setActiveCategory] = useState<DramaCategory>('trending');
   const [dramas, setDramas] = useState<Drama[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
 
   const providers = [
     { id: 'dramabox', name: 'DramaBox', icon: <Sparkles size={18} />, color: 'orange' },
@@ -57,7 +67,19 @@ export function DramaPage() {
 
   useEffect(() => {
     loadDramas();
+  }, [activeProvider, activeCategory, page]);
+
+  useEffect(() => {
+    setPage(1);
   }, [activeProvider, activeCategory]);
+
+  const supportsPagination = (provider: Provider, category: DramaCategory) => {
+    if (provider === 'dramabox') return ['trending', 'latest', 'foryou'].includes(category);
+    if (provider === 'melolo') return ['trending', 'latest'].includes(category);
+    if (provider === 'flickreels') return ['foryou', 'latest'].includes(category);
+    if (provider === 'freereels') return ['foryou', 'homepage'].includes(category);
+    return false;
+  };
 
   const loadDramas = async () => {
     setLoading(true);
@@ -66,9 +88,9 @@ export function DramaPage() {
 
       switch (activeProvider) {
         case 'dramabox':
-          if (activeCategory === 'trending') data = await fetchDramaBoxTrending();
-          else if (activeCategory === 'latest') data = await fetchDramaBoxLatest();
-          else if (activeCategory === 'foryou') data = await fetchDramaBoxForYou();
+          if (activeCategory === 'trending') data = await fetchDramaBoxTrending(page);
+          else if (activeCategory === 'latest') data = await fetchDramaBoxLatest(page);
+          else if (activeCategory === 'foryou') data = await fetchDramaBoxForYou(page);
           break;
 
         case 'reelshort':
@@ -77,20 +99,20 @@ export function DramaPage() {
           break;
 
         case 'melolo':
-          if (activeCategory === 'trending') data = await fetchMeloloTrending();
-          else if (activeCategory === 'latest') data = await fetchMeloloLatest();
+          if (activeCategory === 'trending') data = await fetchMeloloTrending(page);
+          else if (activeCategory === 'latest') data = await fetchMeloloLatest(page);
           break;
 
         case 'flickreels':
-          if (activeCategory === 'foryou') data = await fetchFlickReelsForYou();
-          else if (activeCategory === 'latest') data = await fetchFlickReelsLatest();
+          if (activeCategory === 'foryou') data = await fetchFlickReelsForYou(page);
+          else if (activeCategory === 'latest') data = await fetchFlickReelsLatest(page);
           else if (activeCategory === 'hotrank') data = await fetchFlickReelsHotRank();
           break;
 
         case 'freereels':
-          if (activeCategory === 'foryou') data = await fetchFreeReelsForYou();
+          if (activeCategory === 'foryou') data = await fetchFreeReelsForYou(page);
           else if (activeCategory === 'homepage') {
-            const freeReelsData = await fetchFreeReelsHome();
+            const freeReelsData = await fetchFreeReelsHome(page);
             data = freeReelsData.dramas || freeReelsData.data || [];
           }
           break;
@@ -100,7 +122,7 @@ export function DramaPage() {
           break;
 
         default:
-          data = await fetchDramaBoxTrending();
+          data = await fetchDramaBoxTrending(page);
       }
 
       setDramas(Array.isArray(data) ? data : []);
@@ -123,6 +145,8 @@ export function DramaPage() {
     };
     return labels[category];
   };
+
+  const canPaginate = supportsPagination(activeProvider, activeCategory);
 
   return (
     <div className="min-h-screen py-8 px-4 md:px-8 lg:px-16">
@@ -229,6 +253,70 @@ export function DramaPage() {
               </Link>
             ))}
           </div>
+          {canPaginate && (
+            <div className="flex justify-center mt-12">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        if (page > 1) setPage(page - 1);
+                      }}
+                      className={page === 1 ? 'pointer-events-none opacity-50' : ''}
+                    />
+                  </PaginationItem>
+
+                  {page > 1 && (
+                    <PaginationItem>
+                      <PaginationLink
+                        href="#"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          setPage(page - 1);
+                        }}
+                      >
+                        {page - 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )}
+
+                  <PaginationItem>
+                    <PaginationLink href="#" isActive>
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+
+                  <PaginationItem>
+                    <PaginationLink
+                      href="#"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        setPage(page + 1);
+                      }}
+                    >
+                      {page + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        setPage(page + 1);
+                      }}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
         </div>
       )}
     </div>
