@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test API Response</title>
+</head>
+<body>
+    <h1>Testing Anime API</h1>
+    <button onclick="testSchedule()">Test Schedule</button>
+    <button onclick="testList()">Test List</button>
+    <button onclick="testGenres()">Test Genres</button>
+    <button onclick="testGenreDetail()">Test Genre Detail (Action)</button>
+    
+    <pre id="result"></pre>
+
+    <script>
+        const API_BASE = 'https://api.terasdracin.my.id/api';
+        
+        async function testSchedule() {
+            try {
+                const response = await fetch(`${API_BASE}/anime/samehadaku/schedule`);
+                const data = await response.json();
+                document.getElementById('result').textContent = 'SCHEDULE:\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        async function testList() {
+            try {
+                const response = await fetch(`${API_BASE}/anime/samehadaku/list`);
+                const data = await response.json();
+                document.getElementById('result').textContent = 'LIST:\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        async function testGenres() {
+            try {
+                const response = await fetch(`${API_BASE}/anime/samehadaku/genres`);
+                const data = await response.json();
+                document.getElementById('result').textContent = 'GENRES:\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function testGenreDetail() {
+            try {
+                const response = await fetch(`${API_BASE}/anime/samehadaku/genres/action?page=1`);
+                const data = await response.json();
+                document.getElementById('result').textContent = 'GENRE DETAIL:\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
