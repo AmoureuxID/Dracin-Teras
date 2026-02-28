@@ -1,0 +1,4 @@
+{
+  "error": "Terlalu Banyak Permintaan",
+  "message": "Batas request tercapai (15 hit/menit). Tunggu sebentar. Jika ingin bebas menggunakan API silakan beli salah satu source code dari API ini: https://lynk.id/sansekai"
+}

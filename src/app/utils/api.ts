@@ -534,7 +534,7 @@ export async function fetchDramaBoxDubindo(classify: string = 'terbaru', page: n
 
 export async function fetchDramaBoxDetail(bookId: string): Promise<DramaDetail | null> {
   try {
-    const response = await fetch(`${API_BASE_URL}/dramabox/detail/${bookId}`, {
+    const response = await fetch(`${API_BASE_URL}/dramabox/detail?bookId=${bookId}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
@@ -556,7 +556,7 @@ export async function fetchDramaBoxDetail(bookId: string): Promise<DramaDetail |
 
 export async function fetchDramaBoxEpisodes(bookId: string): Promise<Episode[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/dramabox/allepisode/${bookId}`, {
+    const response = await fetch(`${API_BASE_URL}/dramabox/allepisode?bookId=${bookId}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');

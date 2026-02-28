@@ -1,21 +1,29 @@
 import { useEffect, useState, useRef } from 'react';
-import { useParams, Link, useSearchParams } from 'react-router';
+import { useParams, Link, useSearchParams, useLocation } from 'react-router';
 import { ChevronLeft, ChevronRight, Settings, Volume2, VolumeX, Maximize, Play, Pause } from 'lucide-react';
-import { API_BASE_URL, BACKEND_API_BASE_URL } from '../utils/env';
-import type { Episode } from '../utils/api';
+import { API_BASE_URL, BACKEND_API_BASE_URL, ANIME_API_URL } from '../utils/env';
 
 export function WatchPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id, slug, episode } = useParams<{ id?: string; slug?: string; episode?: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentEpisode = parseInt(searchParams.get('episode') || '1');
-  const source = searchParams.get('source') || 'dramabox';
+  const location = useLocation();
+  const isAnimeRoute = location.pathname.startsWith('/watch/anime/');
+  const contentId = slug || id || '';
+  const source = searchParams.get('source') || (isAnimeRoute ? 'anime' : 'dramabox');
+  const episodeParam = searchParams.get('episode') || episode || '';
+  const parsedEpisode = Number.parseInt(episodeParam || '1');
+  const currentEpisode = Number.isFinite(parsedEpisode) ? parsedEpisode : 1;
+  const seasonParam = searchParams.get('season') || '';
+  const parsedSeason = Number.parseInt(seasonParam || '0');
+  const currentSeason = Number.isFinite(parsedSeason) ? parsedSeason : 0;
   
-  const [episodes, setEpisodes] = useState<Episode[]>([]);
+  const [episodes, setEpisodes] = useState<any[]>([]);
   const [videoUrl, setVideoUrl] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
   const [showControls, setShowControls] = useState(true);
+  const [isIframe, setIsIframe] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout>();
 
@@ -24,8 +32,10 @@ export function WatchPage() {
     return (
       payload?.allEpisodes ||
       payload?.episodes ||
+      payload?.episodeList ||
       fromData?.allEpisodes ||
       fromData?.episodes ||
+      fromData?.episodeList ||
       (Array.isArray(fromData) ? fromData : null) ||
       (Array.isArray(payload) ? payload : [])
     );
@@ -36,15 +46,101 @@ export function WatchPage() {
     return payload?.videoUrl || payload?.url || fromData?.videoUrl || fromData?.url;
   };
 
-  useEffect(() => {
-    loadEpisodes();
-  }, [id, source]);
+  const decodeBase64 = (value: string) => {
+    try {
+      return atob(value);
+    } catch {
+      return value;
+    }
+  };
+
+  const buildProxyUrl = (url: string, referer?: string) => {
+    const base = `${BACKEND_API_BASE_URL}/proxy/video?url=${encodeURIComponent(url)}`;
+    return referer ? `${base}&referer=${encodeURIComponent(referer)}` : base;
+  };
+
+  const pickDramaBoxUrl = (episodeData: any) => {
+    const cdnList = episodeData?.cdnList || episodeData?.cdn_list || [];
+    const preferredCdn =
+      cdnList.find((cdn: any) => cdn?.isDefault || cdn?.default) || cdnList[0];
+    const pathList =
+      preferredCdn?.videoPathList ||
+      preferredCdn?.video_path_list ||
+      preferredCdn?.videoPaths ||
+      [];
+    const preferredPath =
+      pathList.find((path: any) => `${path?.quality || ''}`.includes('720')) || pathList[0];
+    return (
+      preferredPath?.videoPath ||
+      preferredPath?.url ||
+      episodeData?.videoUrl ||
+      episodeData?.url
+    );
+  };
+
+  const pickReelshortUrl = (payload: any) => {
+    const list = payload?.data?.videoList || payload?.videoList || [];
+    const h264 = list.find((item: any) =>
+      `${item?.codec || item?.format || ''}`.toLowerCase().includes('h264'),
+    );
+    return h264?.url || list[0]?.url;
+  };
+
+  const toSafeNumber = (value: any, fallback: number) => {
+    const parsed = Number.parseInt(String(value ?? ''));
+    return Number.isFinite(parsed) ? parsed : fallback;
+  };
+
+  const extractMovieBoxEpisodes = (payload: any) => {
+    const raw =
+      payload?.data?.subject ||
+      payload?.subject ||
+      payload?.data?.detail ||
+      payload?.detail ||
+      payload?.data ||
+      payload;
+    const seasonList =
+      raw?.seasonList ||
+      raw?.seasons ||
+      raw?.seasonInfoList ||
+      raw?.season ||
+      [];
+    if (Array.isArray(seasonList) && seasonList.length > 0) {
+      return seasonList.flatMap((seasonItem: any) => {
+        const seasonNumber = toSafeNumber(
+          seasonItem?.season ?? seasonItem?.seasonNumber ?? seasonItem?.seasonIndex ?? seasonItem?.id,
+          1,
+        );
+        const episodeList = seasonItem?.episodes || seasonItem?.episodeList || seasonItem?.episode || [];
+        if (!Array.isArray(episodeList) || episodeList.length === 0) {
+          return [{ season: seasonNumber, episode: 1, title: seasonItem?.title }];
+        }
+        return episodeList.map((ep: any, index: number) => ({
+          season: seasonNumber,
+          episode: toSafeNumber(ep?.episode ?? ep?.episodeNumber ?? ep?.index, index + 1),
+          title: ep?.title || ep?.name,
+        }));
+      });
+    }
+    return [{ season: 0, episode: 0, title: raw?.title }];
+  };
 
   useEffect(() => {
-    if (currentEpisode) {
-      loadVideo();
+    loadEpisodes();
+  }, [contentId, source]);
+
+  useEffect(() => {
+    if (!contentId) return;
+    if (source === 'anime') {
+      if (episodeParam) loadVideo();
+      return;
     }
-  }, [currentEpisode, source]);
+    if (source === 'moviebox') {
+      loadVideo();
+      return;
+    }
+    if (currentEpisode) loadVideo();
+  }, [contentId, currentEpisode, currentSeason, episodeParam, source]);
 
   const loadEpisodes = async () => {
     try {
@@ -52,7 +148,7 @@ export function WatchPage() {
 
       switch (source) {
         case 'dramabox':
-          const response = await fetch(`${API_BASE_URL}/dramabox/allepisode/${id}`);
+          const response = await fetch(`${API_BASE_URL}/dramabox/allepisode?bookId=${contentId}`);
           if (response.ok) {
             const json = await response.json();
             episodesData = extractEpisodes(json);
@@ -63,16 +159,56 @@ export function WatchPage() {
         case 'melolo':
         case 'flickreels':
         case 'freereels':
-          // These providers return episodes with detail
-          const detailResponse = await fetch(`${API_BASE_URL}/${source}/detail?${source === 'dramabox' || source === 'reelshort' || source === 'melolo' ? 'bookId' : 'id'}=${id}`);
+          const detailKey = source === 'reelshort' || source === 'melolo' ? 'bookId' : 'id';
+          const detailResponse = await fetch(`${API_BASE_URL}/${source}/detail?${detailKey}=${contentId}`);
           if (detailResponse.ok) {
             const json = await detailResponse.json();
             episodesData = extractEpisodes(json);
           }
           break;
+        
+        case 'netshort':
+          const netshortDetail = await fetch(`${API_BASE_URL}/netshort/detail?shortPlayId=${contentId}`);
+          if (netshortDetail.ok) {
+            const json = await netshortDetail.json();
+            episodesData = extractEpisodes(json);
+          }
+          break;
+
+        case 'anime':
+          const animeDetail = await fetch(`${ANIME_API_URL}/anime/${contentId}`);
+          if (animeDetail.ok) {
+            const json = await animeDetail.json();
+            episodesData = json?.data?.episodeList || json?.data?.episodes || json?.episodes || [];
+          }
+          break;
+        case 'moviebox':
+          const movieDetail = await fetch(`${API_BASE_URL}/moviebox/detail?subjectId=${contentId}`);
+          if (movieDetail.ok) {
+            const json = await movieDetail.json();
+            episodesData = extractMovieBoxEpisodes(json);
+          }
+          break;
       }
 
       setEpisodes(episodesData);
+      if (source === 'anime' && !episodeParam && episodesData.length > 0) {
+        const firstId = episodesData[0]?.id;
+        if (firstId) {
+          searchParams.set('episode', String(firstId));
+          setSearchParams(searchParams);
+        }
+      }
+      if (source === 'moviebox' && episodesData.length > 0) {
+        const firstEpisode = episodesData[0];
+        if (!episodeParam) {
+          searchParams.set('episode', String(firstEpisode?.episode ?? 0));
+        }
+        if (!seasonParam) {
+          searchParams.set('season', String(firstEpisode?.season ?? 0));
+        }
+        setSearchParams(searchParams);
+      }
     } catch (error) {
       console.error('Error loading episodes:', error);
     }
@@ -82,32 +218,31 @@ export function WatchPage() {
     setLoading(true);
     try {
       let videoData: any = null;
+      setIsIframe(false);
 
       switch (source) {
         case 'dramabox':
-          // DramaBox menggunakan allepisode untuk mendapatkan video URL
-          const dramaboxEps = await fetch(`${API_BASE_URL}/dramabox/allepisode/${id}`);
+          const dramaboxEps = await fetch(`${API_BASE_URL}/dramabox/allepisode?bookId=${contentId}`);
           if (dramaboxEps.ok) {
             const json = await dramaboxEps.json();
             const episodes = extractEpisodes(json);
             const episode = episodes.find((ep: any) => ep.episodeNumber === currentEpisode || ep.number === currentEpisode);
             if (episode) {
-              videoData = episode.videoUrl || episode.url;
+              videoData = pickDramaBoxUrl(episode);
             }
           }
           break;
 
         case 'reelshort':
-          const reelshortResponse = await fetch(`${API_BASE_URL}/reelshort/watch?bookId=${id}&episodeNumber=${currentEpisode}`);
+          const reelshortResponse = await fetch(`${API_BASE_URL}/reelshort/watch?bookId=${contentId}&episodeNumber=${currentEpisode}`);
           if (reelshortResponse.ok) {
             const json = await reelshortResponse.json();
-            videoData = extractWatchUrl(json);
+            videoData = pickReelshortUrl(json) || extractWatchUrl(json);
           }
           break;
 
         case 'melolo':
-          // Melolo uses stream endpoint with videoId
-          const meloloDetail = await fetch(`${API_BASE_URL}/melolo/detail?bookId=${id}`);
+          const meloloDetail = await fetch(`${API_BASE_URL}/melolo/detail?bookId=${contentId}`);
           if (meloloDetail.ok) {
             const json = await meloloDetail.json();
             const episode = extractEpisodes(json).find((ep: any) => ep.episodeNumber === currentEpisode);
@@ -115,7 +250,18 @@ export function WatchPage() {
               const streamResponse = await fetch(`${API_BASE_URL}/melolo/stream?videoId=${episode.videoId}`);
               if (streamResponse.ok) {
                 const streamJson = await streamResponse.json();
-                videoData = extractWatchUrl(streamJson);
+                const rawModel = streamJson?.data?.video_model || streamJson?.video_model;
+                if (typeof rawModel === 'string') {
+                  const parsedModel = JSON.parse(rawModel);
+                  const videoList = parsedModel?.video_list || [];
+                  const mainUrl = videoList[0]?.main_url || videoList[0]?.mainUrl;
+                  if (mainUrl) {
+                    videoData = decodeBase64(mainUrl);
+                  }
+                }
+                if (!videoData) {
+                  videoData = extractWatchUrl(streamJson);
+                }
               }
             }
           }
@@ -123,10 +269,29 @@ export function WatchPage() {
 
         case 'flickreels':
         case 'freereels':
-          // FlickReels & FreeReels have embedded video URLs in episodes
-          const reelsDetail = await fetch(`${API_BASE_URL}/${source}/detail?id=${id}`);
+          const reelsDetail = await fetch(`${API_BASE_URL}/${source}/detail?id=${contentId}`);
           if (reelsDetail.ok) {
             const json = await reelsDetail.json();
+            const allEps = extractEpisodes(json);
+            const episode = allEps.find((ep: any) => ep.episodeNumber === currentEpisode || ep.number === currentEpisode);
+            if (episode) {
+              if (source === 'freereels') {
+                videoData =
+                  episode.external_audio_h264_m3u8 ||
+                  episode.external_audio_h265_m3u8 ||
+                  episode.videoUrl ||
+                  episode.url;
+              } else {
+                videoData = episode.videoUrl || episode.url || episode?.raw?.videoUrl;
+              }
+            }
+          }
+          break;
+
+        case 'netshort':
+          const netshortDetail = await fetch(`${API_BASE_URL}/netshort/detail?shortPlayId=${contentId}`);
+          if (netshortDetail.ok) {
+            const json = await netshortDetail.json();
             const allEps = extractEpisodes(json);
             const episode = allEps.find((ep: any) => ep.episodeNumber === currentEpisode || ep.number === currentEpisode);
             if (episode) {
@@ -134,27 +299,96 @@ export function WatchPage() {
             }
           }
           break;
+
+        case 'anime':
+          if (!episodeParam) break;
+          const episodeResponse = await fetch(`${ANIME_API_URL}/episode/${episodeParam}`);
+          if (episodeResponse.ok) {
+            const json = await episodeResponse.json();
+            const qualities = json?.data?.server?.qualities || json?.server?.qualities || [];
+            const firstServer = qualities?.[0]?.serverList?.[0] || qualities?.[0]?.servers?.[0] || qualities?.[0];
+            const serverId = firstServer?.serverId || firstServer?.id || firstServer?.server_id;
+            if (serverId) {
+              const serverResponse = await fetch(`${ANIME_API_URL}/server/${serverId}`);
+              if (serverResponse.ok) {
+                const serverJson = await serverResponse.json();
+                videoData = serverJson?.data?.url || serverJson?.url;
+              }
+            }
+          }
+          if (videoData) {
+            setIsIframe(true);
+            setVideoUrl(videoData);
+          }
+          break;
+        case 'moviebox':
+          const sourcesResponse = await fetch(
+            `${API_BASE_URL}/moviebox/sources?subjectId=${contentId}&season=${currentSeason}&episode=${currentEpisode}`,
+          );
+          if (sourcesResponse.ok) {
+            const json = await sourcesResponse.json();
+            const payload = json?.data || json;
+            const downloads = payload?.downloads || payload?.downloadList || payload?.videoList || [];
+            let bestDownload = downloads[0];
+            if (Array.isArray(downloads) && downloads.length > 0) {
+              bestDownload = downloads.reduce((prev: any, curr: any) => {
+                const prevRes = Number(prev?.resolution ?? prev?.quality ?? 0);
+                const currRes = Number(curr?.resolution ?? curr?.quality ?? 0);
+                return currRes > prevRes ? curr : prev;
+              }, downloads[0]);
+            }
+            const rawUrl = bestDownload?.url || bestDownload?.directUrl;
+            if (rawUrl) {
+              const generateResponse = await fetch(
+                `${API_BASE_URL}/moviebox/generate-link-stream-video?url=${encodeURIComponent(rawUrl)}`,
+              );
+              if (generateResponse.ok) {
+                const generateJson = await generateResponse.json();
+                videoData = generateJson?.streamUrl || generateJson?.data?.streamUrl || rawUrl;
+              } else {
+                videoData = rawUrl;
+              }
+            }
+          }
+          break;
       }
 
-      if (videoData) {
-        // Use proxy if needed for CORS
-        const proxyUrl = `${BACKEND_API_BASE_URL}/proxy/video?url=${encodeURIComponent(videoData)}`;
-        setVideoUrl(proxyUrl);
-      } else {
+      if (!videoData && source !== 'anime') {
         // Fallback to demo video
         setVideoUrl('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
+        setIsIframe(false);
+        return;
+      }
+
+      if (videoData && source !== 'anime') {
+        if (source === 'flickreels') {
+          await fetch(`${BACKEND_API_BASE_URL}/proxy/warmup?url=${encodeURIComponent(videoData)}`);
+          setVideoUrl(buildProxyUrl(videoData, 'https://www.flickreels.com/'));
+          return;
+        }
+        if (source === 'moviebox') {
+          setVideoUrl(videoData);
+          setIsIframe(false);
+          return;
+        }
+        setVideoUrl(buildProxyUrl(videoData));
+        return;
       }
     } catch (error) {
       console.error('Error loading video:', error);
       // Fallback video
       setVideoUrl('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
+      setIsIframe(false);
     } finally {
       setLoading(false);
     }
   };
 
-  const goToEpisode = (episodeNumber: number) => {
-    searchParams.set('episode', episodeNumber.toString());
+  const goToEpisode = (episodeValue: number | string, seasonValue?: number) => {
+    searchParams.set('episode', String(episodeValue));
+    if (seasonValue !== undefined) {
+      searchParams.set('season', String(seasonValue));
+    }
     setSearchParams(searchParams);
   };
 
@@ -198,8 +432,31 @@ export function WatchPage() {
     }, 3000);
   };
 
-  const hasNextEpisode = currentEpisode < episodes.length;
-  const hasPrevEpisode = currentEpisode > 1;
+  const currentEpisodeIndex =
+    source === 'anime'
+      ? episodes.findIndex((ep) => String(ep.id) === String(episodeParam))
+      : source === 'moviebox'
+      ? episodes.findIndex(
+          (ep) => Number(ep.season) === Number(currentSeason) && Number(ep.episode) === Number(currentEpisode),
+        )
+      : currentEpisode - 1;
+  const resolvedEpisodeIndex = currentEpisodeIndex >= 0 ? currentEpisodeIndex : 0;
+  const hasNextEpisode = resolvedEpisodeIndex < episodes.length - 1;
+  const hasPrevEpisode = resolvedEpisodeIndex > 0;
+  const currentEpisodeLabel =
+    source === 'anime'
+      ? episodes.find((ep) => String(ep.id) === String(episodeParam))?.episodeNumber || resolvedEpisodeIndex + 1
+      : source === 'moviebox'
+      ? currentSeason > 0
+        ? `S${currentSeason}E${currentEpisode}`
+        : 'Movie'
+      : currentEpisode;
+  const detailLink =
+    source === 'anime'
+      ? `/anime/${contentId}`
+      : source === 'moviebox'
+      ? `/movie/${contentId}`
+      : `/detail/${contentId}?source=${source}`;
 
   return (
     <div className="min-h-screen bg-black">
@@ -215,70 +472,89 @@ export function WatchPage() {
           </div>
         ) : (
           <>
-            <video
-              ref={videoRef}
-              src={videoUrl}
-              className="w-full h-full"
-              onClick={togglePlay}
-              onPlay={() => setPlaying(true)}
-              onPause={() => setPlaying(false)}
-              autoPlay
-              controls={false}
-            />
-
-            {/* Custom Video Controls */}
-            <div 
-              className={`absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 transition-opacity duration-300 ${
-                showControls ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              {/* Top Bar */}
-              <div className="absolute top-0 left-0 right-0 p-6 flex items-center justify-between">
-                <Link 
-                  to={`/detail/${id}?source=${source}`}
-                  className="text-white hover:text-orange-500 transition flex items-center gap-2"
-                >
-                  <ChevronLeft size={24} />
-                  <span className="font-semibold">Back to Details</span>
-                </Link>
-                <div className="text-white text-lg font-semibold">
-                  Episode {currentEpisode} of {episodes.length}
+            {isIframe ? (
+              <>
+                <iframe
+                  src={videoUrl}
+                  className="w-full h-full"
+                  allowFullScreen
+                />
+                <div className="absolute top-0 left-0 right-0 p-6 flex items-center justify-between bg-gradient-to-b from-black/70 via-black/20 to-transparent">
+                  <Link 
+                    to={detailLink}
+                    className="text-white hover:text-orange-500 transition flex items-center gap-2"
+                  >
+                    <ChevronLeft size={24} />
+                    <span className="font-semibold">Back to Details</span>
+                  </Link>
+                  <div className="text-white text-lg font-semibold">
+                    Episode {currentEpisodeLabel} of {episodes.length}
+                  </div>
                 </div>
-              </div>
-
-              {/* Center Play Button */}
-              {!playing && (
-                <button
+              </>
+            ) : (
+              <>
+                <video
+                  ref={videoRef}
+                  src={videoUrl}
+                  className="w-full h-full"
                   onClick={togglePlay}
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-orange-600 hover:bg-orange-700 rounded-full p-6 transition"
+                  onPlay={() => setPlaying(true)}
+                  onPause={() => setPlaying(false)}
+                  autoPlay
+                  controls={false}
+                />
+                <div 
+                  className={`absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 transition-opacity duration-300 ${
+                    showControls ? 'opacity-100' : 'opacity-0'
+                  }`}
                 >
-                  <Play size={48} fill="white" className="text-white ml-1" />
-                </button>
-              )}
-
-              {/* Bottom Controls */}
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <button onClick={togglePlay} className="text-white hover:text-orange-500 transition">
-                      {playing ? <Pause size={28} /> : <Play size={28} />}
-                    </button>
-                    <button onClick={toggleMute} className="text-white hover:text-orange-500 transition">
-                      {muted ? <VolumeX size={28} /> : <Volume2 size={28} />}
-                    </button>
+                  <div className="absolute top-0 left-0 right-0 p-6 flex items-center justify-between">
+                    <Link 
+                      to={detailLink}
+                      className="text-white hover:text-orange-500 transition flex items-center gap-2"
+                    >
+                      <ChevronLeft size={24} />
+                      <span className="font-semibold">Back to Details</span>
+                    </Link>
+                    <div className="text-white text-lg font-semibold">
+                      Episode {currentEpisodeLabel} of {episodes.length}
+                    </div>
                   </div>
-                  
-                  <div className="flex items-center gap-4">
-                    <button className="text-white hover:text-orange-500 transition">
-                      <Settings size={24} />
+
+                  {!playing && (
+                    <button
+                      onClick={togglePlay}
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-orange-600 hover:bg-orange-700 rounded-full p-6 transition"
+                    >
+                      <Play size={48} fill="white" className="text-white ml-1" />
                     </button>
-                    <button onClick={toggleFullscreen} className="text-white hover:text-orange-500 transition">
-                      <Maximize size={24} />
-                    </button>
+                  )}
+
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <button onClick={togglePlay} className="text-white hover:text-orange-500 transition">
+                          {playing ? <Pause size={28} /> : <Play size={28} />}
+                        </button>
+                        <button onClick={toggleMute} className="text-white hover:text-orange-500 transition">
+                          {muted ? <VolumeX size={28} /> : <Volume2 size={28} />}
+                        </button>
+                      </div>
+                      
+                      <div className="flex items-center gap-4">
+                        <button className="text-white hover:text-orange-500 transition">
+                          <Settings size={24} />
+                        </button>
+                        <button onClick={toggleFullscreen} className="text-white hover:text-orange-500 transition">
+                          <Maximize size={24} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </>
+            )}
           </>
         )}
       </div>
@@ -289,7 +565,17 @@ export function WatchPage() {
           <h2 className="text-2xl font-bold text-white">Episodes</h2>
           <div className="flex gap-4">
             <button
-              onClick={() => hasPrevEpisode && goToEpisode(currentEpisode - 1)}
+              onClick={() =>
+                hasPrevEpisode &&
+                goToEpisode(
+                  source === 'anime'
+                    ? episodes[resolvedEpisodeIndex - 1]?.id || resolvedEpisodeIndex
+                    : source === 'moviebox'
+                    ? episodes[resolvedEpisodeIndex - 1]?.episode ?? currentEpisode - 1
+                    : currentEpisode - 1,
+                  source === 'moviebox' ? episodes[resolvedEpisodeIndex - 1]?.season ?? currentSeason : undefined,
+                )
+              }
               disabled={!hasPrevEpisode}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition ${
                 hasPrevEpisode
@@ -301,7 +587,17 @@ export function WatchPage() {
               Previous
             </button>
             <button
-              onClick={() => hasNextEpisode && goToEpisode(currentEpisode + 1)}
+              onClick={() =>
+                hasNextEpisode &&
+                goToEpisode(
+                  source === 'anime'
+                    ? episodes[resolvedEpisodeIndex + 1]?.id || resolvedEpisodeIndex + 2
+                    : source === 'moviebox'
+                    ? episodes[resolvedEpisodeIndex + 1]?.episode ?? currentEpisode + 1
+                    : currentEpisode + 1,
+                  source === 'moviebox' ? episodes[resolvedEpisodeIndex + 1]?.season ?? currentSeason : undefined,
+                )
+              }
               disabled={!hasNextEpisode}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition ${
                 hasNextEpisode
@@ -318,18 +614,36 @@ export function WatchPage() {
         {/* Episodes Grid */}
         <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-3">
           {episodes.map((episode, index) => {
-            const episodeNum = episode.episodeNumber || episode.number || index + 1;
+            const episodeNum = episode.episodeNumber || episode.number || episode.episode || index + 1;
+            const episodeValue =
+              source === 'anime'
+                ? episode.id || episodeNum
+                : source === 'moviebox'
+                ? episode.episode ?? episodeNum
+                : episodeNum;
+            const episodeSeason = source === 'moviebox' ? episode.season ?? currentSeason : undefined;
+            const episodeLabel =
+              source === 'moviebox'
+                ? (episodeSeason ?? 0) > 0
+                  ? `S${episodeSeason}E${episodeValue}`
+                  : 'Movie'
+                : episodeNum;
             return (
               <button
-                key={index}
-                onClick={() => goToEpisode(episodeNum)}
+                key={episode.id || index}
+                onClick={() => goToEpisode(episodeValue, episodeSeason)}
                 className={`p-4 rounded-lg font-semibold transition ${
-                  episodeNum === currentEpisode
+                  source === 'anime'
+                    ? String(episode.id) === String(episodeParam)
+                    : source === 'moviebox'
+                    ? Number(episodeSeason) === Number(currentSeason) &&
+                      Number(episodeValue) === Number(currentEpisode)
+                    : episodeNum === currentEpisode
                     ? 'bg-orange-600 text-white ring-2 ring-orange-400'
                     : 'bg-white/10 hover:bg-white/20 text-white'
                 }`}
               >
-                {episodeNum}
+                {episodeLabel}
               </button>
             );
           })}

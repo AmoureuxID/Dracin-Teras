@@ -54,6 +54,9 @@ export function DetailPage() {
     );
   };
 
+  const resolveEpisodeNumber = (episode: any, index: number) =>
+    episode?.episodeNumber ?? episode?.number ?? episode?.episode ?? index + 1;
+
   useEffect(() => {
     if (isAnime && slug) {
       loadAnimeDetail(slug);
@@ -72,13 +75,13 @@ export function DetailPage() {
 
       switch (provider) {
         case 'dramabox':
-          const response = await fetch(`${API_BASE_URL}/dramabox/detail/${bookId}`);
+          const response = await fetch(`${API_BASE_URL}/dramabox/detail?bookId=${bookId}`);
           if (response.ok) {
             const json = await response.json();
             dramaData = extractObject(json);
           }
           
-          const episodesResponse = await fetch(`${API_BASE_URL}/dramabox/allepisode/${bookId}`);
+          const episodesResponse = await fetch(`${API_BASE_URL}/dramabox/allepisode?bookId=${bookId}`);
           if (episodesResponse.ok) {
             const episodesJson = await episodesResponse.json();
             episodesData = extractEpisodes(episodesJson);
@@ -122,7 +125,7 @@ export function DetailPage() {
           break;
 
         default:
-          const defaultResponse = await fetch(`${API_BASE_URL}/dramabox/detail/${bookId}`);
+          const defaultResponse = await fetch(`${API_BASE_URL}/dramabox/detail?bookId=${bookId}`);
           if (defaultResponse.ok) {
             const json = await defaultResponse.json();
             dramaData = extractObject(json);
@@ -260,15 +263,19 @@ export function DetailPage() {
                 Episodes ({episodes.length})
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
-                {episodes.map((episode) => (
+                {episodes.map((episode, index) => {
+                  const episodeNumber = resolveEpisodeNumber(episode, index);
+                  const episodeKey = episode?.id || episodeNumber || index;
+                  return (
                   <Link
-                    key={episode.episodeNumber}
-                    to={`/watch/${id}?source=${source}&episode=${episode.episodeNumber}`}
+                    key={episodeKey}
+                    to={`/watch/${id}?source=${source}&episode=${episodeNumber}`}
                     className="bg-white/10 hover:bg-orange-600 text-white p-4 rounded-lg text-center font-semibold transition"
                   >
-                    EP {episode.episodeNumber}
+                    EP {episodeNumber}
                   </Link>
-                ))}
+                );
+                })}
               </div>
             </div>
           )}

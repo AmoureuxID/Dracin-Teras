@@ -1,0 +1,56 @@
+{
+  "bookId": "41000116666",
+  "bookName": "Cinta yang Tersisa di Balik Luka",
+  "coverWap": "https://hwztchapter.dramaboxdb.com/data/cppartner/4x1/41x0/410x0/41000116666/41000116666.jpg?t=1748934149455",
+  "chapterCount": 88,
+  "introduction": "Zevan luka parah. Untungnya, Liora menyelamatkannya dengan transfusi darah, bahkan memanggil Zevan ayah, yang memulai kisah Liora menyelamatkan ibunya, Salsa yang terperangkap di rumah sakit jiwa bersama Zevan. Tapi, setelah mengetahui identitas asli Zevan, Salsa menuduh Zevan menyembunyikan identitasnya dan menyebabkan delapan tahun hidupnya dan putrinya terbuang sia-sia. Zevan berulang kali berusaha memperbaiki keadaan, akhirnya berhasil mendapatkan pengampunan Salsa.",
+  "tags": [
+    "Pembalikan Identitas",
+    "Kabur Saat Hamil",
+    "Penebusan",
+    "Pantang Menyerah",
+    "Kesempatan Kedua",
+    "Modern"
+  ],
+  "tagV3s": [
+    {
+      "tagId": 1395,
+      "tagName": "Pembalikan Identitas",
+      "tagEnName": "Hidden Identity"
+    },
+    {
+      "tagId": 1397,
+      "tagName": "Kabur Saat Hamil",
+      "tagEnName": "Secret Baby"
+    },
+    {
+      "tagId": 1459,
+      "tagName": "Penebusan",
+      "tagEnName": "Redemption"
+    },
+    {
+      "tagId": 1453,
+      "tagName": "Pantang Menyerah",
+      "tagEnName": "Strong-Willed"
+    },
+    {
+      "tagId": 1392,
+      "tagName": "Kesempatan Kedua",
+      "tagEnName": "Second Chance"
+    },
+    {
+      "tagId": 1352,
+      "tagName": "Modern",
+      "tagEnName": "Modern"
+    }
+  ],
+  "isEntry": 0,
+  "index": 0,
+  "dataFrom": "算法_推荐剧",
+  "cardType": 1,
+  "markNamesConnectKey": ", ",
+  "reserveStatus": 0,
+  "bookShelfStatus": 1,
+  "shelfTime": "2025-06-03 15:53:21",
+  "inLibrary": false
+}

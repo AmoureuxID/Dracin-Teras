@@ -102,7 +102,7 @@ export function HomePage() {
                 )}
               </div>
               <Link
-                to={`/detail/${currentHero.id}`}
+                to={`/detail/${currentHero.id}?source=dramabox`}
                 className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-full font-semibold transition"
               >
                 <Play size={20} fill="currentColor" />
@@ -152,7 +152,7 @@ export function HomePage() {
           {dramaItems.map((item) => (
             <Link
               key={item.id}
-              to={`/detail/${item.id}`}
+              to={`/detail/${item.id}?source=dramabox`}
               className="group relative aspect-[2/3] rounded-lg overflow-hidden"
             >
               <img

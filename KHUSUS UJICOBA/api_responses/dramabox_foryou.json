@@ -1,0 +1,643 @@
+[
+  {
+    "bookId": "42000006096",
+    "bookName": "Asalku dari Zaman Kuno (Sulih Suara)",
+    "coverWap": "https://hwztchapter.dramaboxdb.com/data/cppartner/4x2/42x0/420x0/42000006096/42000006096.jpg?t=1770603506910",
+    "chapterCount": 73,
+    "introduction": "Reyna Kiana, seorang jenderal dari zaman kuno, secara tak sengaja melintasi waktu ke zaman modern dan menjadi nona Keluarga Kiana. Menghadapi perlakuan tidak adil dari nona palsu, Wenny Kiana, dan keluarganya, Reyna menggunakan kecerdasan dan keberaniannya untuk mengungkap rencana jahat. Berkat itu, dia kembali dipercaya. Reyna terus berkembang di zaman modern, menciptakan kisah luar biasa tentang intrik keluarga dan kebangkitan setelah melintasi waktu.",
+    "tags": [
+      "Perjalanan Waktu",
+      "Pembalikan Identitas",
+      "Serangan Balik",
+      "Dewa Perang",
+      "Modern",
+      "Wanita Kuat"
+    ],
+    "tagV3s": [
+      {
+        "tagId": 1404,
+        "tagName": "Perjalanan Waktu",
+        "tagEnName": "Time Travel"
+      },
+      {
+        "tagId": 1395,
+        "tagName": "Pembalikan Identitas",
+        "tagEnName": "Hidden Identity"
+      },
+      {
+        "tagId": 1399,
+        "tagName": "Serangan Balik",
+        "tagEnName": "Counterattack"
+      },
+      {
+        "tagId": 1369,
+        "tagName": "Dewa Perang",
+        "tagEnName": "War God"
+      },
+      {
+        "tagId": 1352,
+        "tagName": "Modern",
+        "tagEnName": "Modern"
+      },
+      {
+        "tagId": 1361,
+        "tagName": "Wanita Kuat",
+        "tagEnName": "Strong Heroine"
+      }
+    ],
+    "bookSource": {
+      "sceneId": "ovs_vd_cnxh_rec",
+      "expId": "bigdata_rec",
+      "strategyId": "glpubhz5",
+      "strategyName": "",
+      "log_id": "c7ecdbc246d8652ca3e9f561256195c5"
+    },
+    "isEntry": 0,
+    "index": 0,
+    "corner": {
+      "cornerType": 1,
+      "name": "Terpopuler",
+      "color": "#F54E96"
+    },
+    "dataFrom": "算法_推荐剧",
+    "cardType": 1,
+    "rankVo": {
+      "rankType": 1,
+      "hotCode": "220K",
+      "recCopy": "Sedang Tren TOP 6",
+      "sort": 6
+    },
+    "markNamesConnectKey": ", ",
+    "algorithmRecomDot": "{\"log_id\":\"c7ecdbc246d8652ca3e9f561256195c5\",\"ret_time\":\"1772309186697\",\"scene_id\":\"ovs_vd_cnxh_rec\",\"rec_id\":\"bigdata_rec\"}",
+    "playCount": "7.2M",
+    "bookShelfTime": 1771063200000,
+    "shelfTime": "2026-02-14 18:00:00",
+    "inLibrary": false
+  },
+  {
+    "bookId": "42000004908",
+    "bookName": "Merebut Kembali Harga Diri",
+    "coverWap": "https://hwztchapter.dramaboxdb.com/data/cppartner/4x2/42x0/420x0/42000004908/42000004908.jpg?t=1769478626410",
+    "chapterCount": 60,
+    "introduction": "Selama tujuh tahun, Anna Jackel mengorbankan segalanya demi suami dan putrinya. Namun, Kris Salim justru membawa anak mereka pergi, meninggalkan Anna sendirian. Di hari ulang tahunnya, Anna akhinya menyadari bahwa suami dan putrinya lebih memilih adiknya sendiri sebagai keluarga mereka. Anna pun memilih bercerai, memutus semua ikatan dengan Keluarga Salim, dan bangkit untuk merebut kembali harga diri serta hidup yang pantas dia miliki.",
+    "tags": [
+      "Perselingkuhan",
+      "Penyesalan",
+      "Serangan Balik",
+      "Balas Dendam",
+      "Intrik Keluarga",
+      "Penebusan"
+    ],
+    "tagV3s": [
+      {
+        "tagId": 1400,
+        "tagName": "Perselingkuhan",
+        "tagEnName": "Betrayal"
+      },
+      {
+        "tagId": 1654,
+        "tagName": "Penyesalan",
+        "tagEnName": "All-Too-Late"
+      },
+      {
+        "tagId": 1399,
+        "tagName": "Serangan Balik",
+        "tagEnName": "Counterattack"
+      },
+      {
+        "tagId": 1394,
+        "tagName": "Balas Dendam",
+        "tagEnName": "Revenge"
+      },
+      {
+        "tagId": 1411,
+        "tagName": "Intrik Keluarga",
+        "tagEnName": "Family Intrigue"
+      },
+      {
+        "tagId": 1459,
+        "tagName": "Penebusan",
+        "tagEnName": "Redemption"
+      }
+    ],
+    "bookSource": {
+      "sceneId": "ovs_vd_cnxh_rec",
+      "expId": "bigdata_rec",
+      "strategyId": "glpubhz5",
+      "strategyName": "",
+      "log_id": "c7ecdbc246d8652ca3e9f561256195c5"
+    },
+    "isEntry": 0,
+    "index": 0,
+    "corner": {
+      "cornerType": 1,
+      "name": "Terpopuler",
+      "color": "#F54E96"
+    },
+    "dataFrom": "算法_推荐剧",
+    "cardType": 1,
+    "rankVo": {
+      "rankType": 1,
+      "hotCode": "493K",
+      "recCopy": "Sedang Tren TOP 1",
+      "sort": 1
+    },
+    "markNamesConnectKey": ", ",
+    "algorithmRecomDot": "{\"log_id\":\"c7ecdbc246d8652ca3e9f561256195c5\",\"ret_time\":\"1772309186697\",\"scene_id\":\"ovs_vd_cnxh_rec\",\"rec_id\":\"bigdata_rec\"}",
+    "playCount": "18.4M",
+    "bookShelfTime": 1769485283000,
+    "shelfTime": "2026-01-27 11:41:23",
+    "inLibrary": false
+  },
+  {
+    "bookId": "42000003970",
+    "bookName": "Ultimatum Sang Raja Mafia",
+    "coverWap": "https://hwztchapter.dramaboxdb.com/data/cppartner/4x2/42x0/420x0/42000003970/42000003970.jpg?t=1768293743402",
+    "chapterCount": 54,
+    "introduction": "Di malam Valentine, Lydia menyelamatkan seorang pria terluka, yang ternyata adalah Soren Moretti, Raja Mafia yang terkenal kejam. Soren memberi Lydia ultimatum: menikah dengannya atau mati. Karena terpaksa, Lydia setuju dengan syarat Soren harus mampu membuat Lydia jatuh cinta padanya dalam 30 hari, atau dia bebas. Dan sejak saat itu, dimulailah permainan cinta/benci yang menggairahkan sekaligus berbahaya…",
+    "tags": [
+      "Cinta Setelah Menikah",
+      "Cinta Paksaan",
+      "Musuh Jadi Kekasih",
+      "Penebusan",
+      "Mafia",
+      "Gadis Naif"
+    ],
+    "tagV3s": [
+      {
+        "tagId": 1393,
+        "tagName": "Cinta Setelah Menikah",
+        "tagEnName": "Love After Marriage"
+      },
+      {
+        "tagId": 1378,
+        "tagName": "Cinta Paksaan",
+        "tagEnName": "Forced Love"
+      },
+      {
+        "tagId": 1390,
+        "tagName": "Musuh Jadi Kekasih",
+        "tagEnName": "Enemy to Lover"
+      },
+      {
+        "tagId": 1459,
+        "tagName": "Penebusan",
+        "tagEnName": "Redemption"
+      },
+      {
+        "tagId": 1364,
+        "tagName": "Mafia",
+        "tagEnName": "Mafia"
+      },
+      {
+        "tagId": 1374,
+        "tagName": "Gadis Naif",
+        "tagEnName": "Innocent Damsel"
+      }
+    ],
+    "bookSource": {
+      "sceneId": "ovs_vd_cnxh_rec",
+      "expId": "bigdata_rec",
+      "strategyId": "glpubhz5",
+      "strategyName": "",
+      "log_id": "c7ecdbc246d8652ca3e9f561256195c5"
+    },
+    "isEntry": 0,
+    "index": 0,
+    "corner": {
+      "cornerType": 1,
+      "name": "Terpopuler",
+      "color": "#F54E96"
+    },
+    "dataFrom": "算法_推荐剧",
+    "cardType": 1,
+    "rankVo": {
+      "rankType": 1,
+      "hotCode": "353K",
+      "recCopy": "Sedang Tren TOP 4",
+      "sort": 4
+    },
+    "markNamesConnectKey": ", ",
+    "algorithmRecomDot": "{\"log_id\":\"c7ecdbc246d8652ca3e9f561256195c5\",\"ret_time\":\"1772309186697\",\"scene_id\":\"ovs_vd_cnxh_rec\",\"rec_id\":\"bigdata_rec\"}",
+    "playCount": "35.2M",
+    "bookShelfTime": 1768357739000,
+    "shelfTime": "2026-01-14 10:28:59",
+    "inLibrary": false
+  },
+  {
+    "bookId": "42000004216",
+    "bookName": "Sang Tuan Muda Penyamar (Sulih Suara)",
+    "coverWap": "https://hwztchapter.dramaboxdb.com/data/cppartner/4x2/42x0/420x0/42000004216/42000004216.jpg?t=1768531629689",
+    "chapterCount": 70,
+    "introduction": "Chloe berlari ke kantor catatan untuk dinikahi Justin, tapi malah tahu itu hanya tipu daya Justin untuk Victoria. Patah hati, Chloe justru menyerahkan buketnya pada seorang \"pekerja bangunan\" yang baru dihina pacarnya. Dia setuju menikah meski pria itu miskin. Tanpa disadari, pria itu adalah Sean Kusuma, pewaris tunggal keluarga terkaya.",
+    "tags": [
+      "Pembalikan Identitas",
+      "Serangan Balik",
+      "CEO",
+      "Cinta Setelah Menikah",
+      "Takdir Cinta",
+      "Modern"
+    ],
+    "tagV3s": [
+      {
+        "tagId": 1338,
+        "tagName": "Pembalikan Identitas",
+        "tagEnName": "Hidden Identity"
+      },
+      {
+        "tagId": 1340,
+        "tagName": "Serangan Balik",
+        "tagEnName": "Counterattack"
+      },
+      {
+        "tagId": 1324,
+        "tagName": "CEO",
+        "tagEnName": "Billionaire"
+      },
+      {
+        "tagId": 1423,
+        "tagName": "Cinta Setelah Menikah",
+        "tagEnName": "Love After Marriage"
+      },
+      {
+        "tagId": 1663,
+        "tagName": "Takdir Cinta",
+        "tagEnName": "Destined Love"
+      },
+      {
+        "tagId": 1318,
+        "tagName": "Modern",
+        "tagEnName": "Modern"
+      }
+    ],
+    "bookSource": {
+      "sceneId": "ovs_vd_cnxh_rec",
+      "expId": "bigdata_rec",
+      "strategyId": "glpubhz5",
+      "strategyName": "",
+      "log_id": "c7ecdbc246d8652ca3e9f561256195c5"
+    },
+    "isEntry": 0,
+    "index": 0,
+    "corner": {
+      "cornerType": 1,
+      "name": "Terpopuler",
+      "color": "#F54E96"
+    },
+    "dataFrom": "算法_推荐剧",
+    "cardType": 1,
+    "rankVo": {
+      "rankType": 2,
+      "hotCode": "23.8K",
+      "recCopy": "Pencarian TOP 8",
+      "sort": 8
+    },
+    "markNamesConnectKey": ", ",
+    "algorithmRecomDot": "{\"log_id\":\"c7ecdbc246d8652ca3e9f561256195c5\",\"ret_time\":\"1772309186697\",\"scene_id\":\"ovs_vd_cnxh_rec\",\"rec_id\":\"bigdata_rec\"}",
+    "playCount": "22.5M",
+    "bookShelfTime": 1768899601000,
+    "shelfTime": "2026-01-20 17:00:01",
+    "inLibrary": false
+  },
+  {
+    "bookId": "42000002888",
+    "bookName": "Dewa Judi (Sulih Suara)",
+    "coverWap": "https://hwztchapter.dramaboxdb.com/data/cppartner/4x2/42x0/420x0/42000002888/42000002888.jpg?t=1766975617476",
+    "chapterCount": 74,
+    "introduction": "Selama liburan Tahun Baru Imlek, Yena dijebak oleh sahabatnya, Ceni, dan kalah judi 400 juta. Uang itu adalah biaya sekolah putrinya, biaya pengobatan ayahnya, dan biaya hidup keluarga mereka bertiga. Demi mendapatkan kembali uang tersebut, Sandi nekat masuk ke dalam lingkaran judi itu untuk melawan mereka dengan menggunakan teknik judi tingkat tinggi...",
+    "tags": [
+      "Balas Dendam",
+      "Judi",
+      "Serangan Balik",
+      "Kekuatan Khusus",
+      "Modern",
+      "Pria Dominan"
+    ],
+    "tagV3s": [
+      {
+        "tagId": 1337,
+        "tagName": "Balas Dendam",
+        "tagEnName": "Revenge"
+      },
+      {
+        "tagId": 1688,
+        "tagName": "Judi",
+        "tagEnName": "Gambling"
+      },
+      {
+        "tagId": 1340,
+        "tagName": "Serangan Balik",
+        "tagEnName": "Counterattack"
+      },
+      {
+        "tagId": 1334,
+        "tagName": "Kekuatan Khusus",
+        "tagEnName": "The Chosen One"
+      },
+      {
+        "tagId": 1318,
+        "tagName": "Modern",
+        "tagEnName": "Modern"
+      },
+      {
+        "tagId": 1323,
+        "tagName": "Pria Dominan",
+        "tagEnName": "Powerful Male Lead"
+      }
+    ],
+    "bookSource": {
+      "sceneId": "ovs_vd_cnxh_rec",
+      "expId": "bigdata_rec",
+      "strategyId": "glpubhz5",
+      "strategyName": "",
+      "log_id": "c7ecdbc246d8652ca3e9f561256195c5"
+    },
+    "isEntry": 0,
+    "index": 0,
+    "corner": {
+      "cornerType": 1,
+      "name": "Sulih Suara",
+      "color": "#8773DF"
+    },
+    "dataFrom": "算法_推荐剧",
+    "cardType": 1,
+    "markNamesConnectKey": ", ",
+    "algorithmRecomDot": "{\"log_id\":\"c7ecdbc246d8652ca3e9f561256195c5\",\"ret_time\":\"1772309186697\",\"scene_id\":\"ovs_vd_cnxh_rec\",\"rec_id\":\"bigdata_rec\"}",
+    "playCount": "19.7M",
+    "bookShelfTime": 1766987470000,
+    "shelfTime": "2025-12-29 13:51:10",
+    "inLibrary": false
+  },
+  {
+    "bookId": "42000004347",
+    "bookName": "Istriku Tiga, Takdirku Gila S2",
+    "coverWap": "https://hwztchapter.dramaboxdb.com/data/cppartner/4x2/42x0/420x0/42000004347/42000004347.jpg?t=1768802596958",
+    "chapterCount": 70,
+    "introduction": "Arsa Wira, seorang pria modern, melakukan perjalanan lintas waktu ke masa kuno dan memperoleh sebuah sistem poin afeksi. Dia menikahi tiga istri yang cantik jelita dan menjadi orang yang sangat kaya. Masalah mulai terjadi ketika tiba-tiba saja istri keduanya diculik.",
+    "tags": [
+      "Perjalanan Waktu",
+      "Sistem",
+      "Tokoh Legendaris",
+      "Kekuatan Khusus",
+      "Pria Dominan"
+    ],
+    "tagV3s": [
+      {
+        "tagId": 1344,
+        "tagName": "Perjalanan Waktu",
+        "tagEnName": "Time Travel"
+      },
+      {
+        "tagId": 1346,
+        "tagName": "Sistem",
+        "tagEnName": "Gamified World"
+      },
+      {
+        "tagId": 1332,
+        "tagName": "Tokoh Legendaris",
+        "tagEnName": "Divine Tycoon"
+      },
+      {
+        "tagId": 1334,
+        "tagName": "Kekuatan Khusus",
+        "tagEnName": "The Chosen One"
+      },
+      {
+        "tagId": 1323,
+        "tagName": "Pria Dominan",
+        "tagEnName": "Powerful Male Lead"
+      }
+    ],
+    "bookSource": {
+      "sceneId": "ovs_vd_cnxh_rec",
+      "expId": "bigdata_rec",
+      "strategyId": "glpubhz5",
+      "strategyName": "",
+      "log_id": "c7ecdbc246d8652ca3e9f561256195c5"
+    },
+    "isEntry": 0,
+    "index": 0,
+    "dataFrom": "算法_推荐剧",
+    "cardType": 1,
+    "rankVo": {
+      "rankType": 2,
+      "hotCode": "62.5K",
+      "recCopy": "Pencarian TOP 2",
+      "sort": 2
+    },
+    "markNamesConnectKey": ", ",
+    "algorithmRecomDot": "{\"log_id\":\"c7ecdbc246d8652ca3e9f561256195c5\",\"ret_time\":\"1772309186697\",\"scene_id\":\"ovs_vd_cnxh_rec\",\"rec_id\":\"bigdata_rec\"}",
+    "playCount": "11.2M",
+    "bookShelfTime": 1769418001000,
+    "shelfTime": "2026-01-26 17:00:01",
+    "inLibrary": false
+  },
+  {
+    "bookId": "42000004594",
+    "bookName": "Tiada Lagi Cintaku Bagimu",
+    "coverWap": "https://hwztchapter.dramaboxdb.com/data/cppartner/4x2/42x0/420x0/42000004594/42000004594.jpg?t=1768982760056",
+    "chapterCount": 50,
+    "introduction": "Kebahagiaan Evelyn menyambut kehamilan anak pertamanya dengan Edward berantakan karena kedatangan Daisy, teman masa kecil Edward. Puncaknya akibat ulah Daisy dan perlakuan Edward, Evelyn keguguran. Sakit hati, Evelyn menerima tawaran sahabat dekatnya Aarin untuk kembali menekuni karir desainnya. Sementara itu Edward yang akhirnya menyadari ulah Daisy berniat menjauh dan berusaha kembali merebut Evelyn walau nyawa taruhannya…",
+    "tags": [
+      "Perselingkuhan",
+      "Penyesalan",
+      "Mengejar Istri",
+      "CEO",
+      "Wanita Karier",
+      "Sahabat Masa Kecil"
+    ],
+    "tagV3s": [
+      {
+        "tagId": 1400,
+        "tagName": "Perselingkuhan",
+        "tagEnName": "Betrayal"
+      },
+      {
+        "tagId": 1654,
+        "tagName": "Penyesalan",
+        "tagEnName": "All-Too-Late"
+      },
+      {
+        "tagId": 1401,
+        "tagName": "Mengejar Istri",
+        "tagEnName": "Winning Her Back"
+      },
+      {
+        "tagId": 1362,
+        "tagName": "CEO",
+        "tagEnName": "Billionaire"
+      },
+      {
+        "tagId": 1375,
+        "tagName": "Wanita Karier",
+        "tagEnName": "Career Woman"
+      },
+      {
+        "tagId": 1381,
+        "tagName": "Sahabat Masa Kecil",
+        "tagEnName": "Childhood Sweetheart"
+      }
+    ],
+    "bookSource": {
+      "sceneId": "ovs_vd_cnxh_rec",
+      "expId": "bigdata_rec",
+      "strategyId": "glpubhz5",
+      "strategyName": "",
+      "log_id": "c7ecdbc246d8652ca3e9f561256195c5"
+    },
+    "isEntry": 0,
+    "index": 0,
+    "dataFrom": "算法_推荐剧",
+    "cardType": 1,
+    "markNamesConnectKey": ", ",
+    "algorithmRecomDot": "{\"log_id\":\"c7ecdbc246d8652ca3e9f561256195c5\",\"ret_time\":\"1772309186697\",\"scene_id\":\"ovs_vd_cnxh_rec\",\"rec_id\":\"bigdata_rec\"}",
+    "playCount": "1.5M",
+    "bookShelfTime": 1769050784000,
+    "shelfTime": "2026-01-22 10:59:44",
+    "inLibrary": false
+  },
+  {
+    "bookId": "42000005043",
+    "bookName": "Di Cintamu Hanya Ada Dusta (Sulih Suara)",
+    "coverWap": "https://hwztchapter.dramaboxdb.com/data/cppartner/4x2/42x0/420x0/42000005043/42000005043.jpg?t=1769578790330",
+    "chapterCount": 57,
+    "introduction": "Setelah sekian lamanya menikah, Charlotte menyadari kalau suaminya August, diam-diam mencintai adik tirinya Tessa, dan pernikahan mereka hanyalah kedok. Sakit hati atas perlakuan August yang membela Tessa walaupun telah melukainya, Charlotte memutuskan bercerai dan pergi meninggalkannya. Saat menyadari sifat Tessa, August yang meyakini Charlotte masih mencintainya berusaha merebut kembali hatinya dengan segala cara.",
+    "tags": [
+      "Perselingkuhan",
+      "Penyesalan",
+      "Mengejar Istri",
+      "Cinta Segitiga",
+      "Kesempatan Kedua",
+      "Saudara Tiri"
+    ],
+    "tagV3s": [
+      {
+        "tagId": 1400,
+        "tagName": "Perselingkuhan",
+        "tagEnName": "Betrayal"
+      },
+      {
+        "tagId": 1654,
+        "tagName": "Penyesalan",
+        "tagEnName": "All-Too-Late"
+      },
+      {
+        "tagId": 1401,
+        "tagName": "Mengejar Istri",
+        "tagEnName": "Winning Her Back"
+      },
+      {
+        "tagId": 1380,
+        "tagName": "Cinta Segitiga",
+        "tagEnName": "Love Triangle"
+      },
+      {
+        "tagId": 1392,
+        "tagName": "Kesempatan Kedua",
+        "tagEnName": "Second Chance"
+      },
+      {
+        "tagId": 1456,
+        "tagName": "Saudara Tiri",
+        "tagEnName": "Step-Siblings"
+      }
+    ],
+    "bookSource": {
+      "sceneId": "ovs_vd_cnxh_rec",
+      "expId": "bigdata_rec",
+      "strategyId": "glpubhz5",
+      "strategyName": "",
+      "log_id": "c7ecdbc246d8652ca3e9f561256195c5"
+    },
+    "isEntry": 0,
+    "index": 0,
+    "corner": {
+      "cornerType": 1,
+      "name": "Terpopuler",
+      "color": "#F54E96"
+    },
+    "dataFrom": "算法_推荐剧",
+    "cardType": 1,
+    "rankVo": {
+      "rankType": 1,
+      "hotCode": "168K",
+      "recCopy": "Sedang Tren TOP 8",
+      "sort": 8
+    },
+    "markNamesConnectKey": ", ",
+    "algorithmRecomDot": "{\"log_id\":\"c7ecdbc246d8652ca3e9f561256195c5\",\"ret_time\":\"1772309186697\",\"scene_id\":\"ovs_vd_cnxh_rec\",\"rec_id\":\"bigdata_rec\"}",
+    "playCount": "3.7M",
+    "bookShelfTime": 1770022800000,
+    "shelfTime": "2026-02-02 17:00:00",
+    "inLibrary": false
+  },
+  {
+    "bookId": "42000004671",
+    "bookName": "Pengganti Tiga Tahun (Sulih Suara)",
+    "coverWap": "https://hwztchapter.dramaboxdb.com/data/cppartner/4x2/42x0/420x0/42000004671/42000004671.jpg?t=1769062695623",
+    "chapterCount": 71,
+    "introduction": "Salma Julia menggantikan kakak kembarnya, Sarah, demi menjaga hubungan antara Keluarga Julia dan Peter. Dia menikah dengan Chris Peter, tapi diperlakukan buruk dan disakiti. Setelah tiga tahun, dia menyelesaikan misinya dan pergi. Sarah kembali, mengungkap identitas Salma. Chris, yang menyesal, mencari Salma, tapi dia sudah melupakan masa lalu dan pacaran dengan Rendy Sino. Chris hidup dalam penyesalan.",
+    "tags": [
+      "Pembalikan Identitas",
+      "Kekasih Kontrak",
+      "Perselingkuhan",
+      "Wanita Mandiri",
+      "Cinta Setelah Menikah",
+      "Kesempatan Kedua"
+    ],
+    "tagV3s": [
+      {
+        "tagId": 1395,
+        "tagName": "Pembalikan Identitas",
+        "tagEnName": "Hidden Identity"
+      },
+      {
+        "tagId": 1621,
+        "tagName": "Kekasih Kontrak",
+        "tagEnName": "Contract Lover"
+      },
+      {
+        "tagId": 1400,
+        "tagName": "Perselingkuhan",
+        "tagEnName": "Betrayal"
+      },
+      {
+        "tagId": 1452,
+        "tagName": "Wanita Mandiri",
+        "tagEnName": "Independent Woman"
+      },
+      {
+        "tagId": 1393,
+        "tagName": "Cinta Setelah Menikah",
+        "tagEnName": "Love After Marriage"
+      },
+      {
+        "tagId": 1392,
+        "tagName": "Kesempatan Kedua",
+        "tagEnName": "Second Chance"
+      }
+    ],
+    "bookSource": {
+      "sceneId": "ovs_vd_cnxh_rec",
+      "expId": "bigdata_rec",
+      "strategyId": "glpubhz5",
+      "strategyName": "",
+      "log_id": "c7ecdbc246d8652ca3e9f561256195c5"
+    },
+    "isEntry": 0,
+    "index": 0,
+    "corner": {
+      "cornerType": 1,
+      "name": "Terpopuler",
+      "color": "#F54E96"
+    },
+    "dataFrom": "算法_推荐剧",
+    "cardType": 1,
+    "markNamesConnectKey": ", ",
+    "algorithmRecomDot": "{\"log_id\":\"c7ecdbc246d8652ca3e9f561256195c5\",\"ret_time\":\"1772309186697\",\"scene_id\":\"ovs_vd_cnxh_rec\",\"rec_id\":\"bigdata_rec\"}",
+    "playCount": "9M",
+    "bookShelfTime": 1769504400000,
+    "shelfTime": "2026-01-27 17:00:00",
+    "inLibrary": false
+  }
+]
