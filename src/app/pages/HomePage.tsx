@@ -5,11 +5,9 @@ import {
   fetchDramaBoxVIP, 
   fetchDramaBoxTrending, 
   fetchAnimeOngoing,
-  fetchKomikPopuler,
   fetchMovieBoxTrending,
   type Drama,
   type Anime,
-  type Komik,
   type Movie
 } from '../utils/api';
 
@@ -17,7 +15,6 @@ export function HomePage() {
   const [heroItems, setHeroItems] = useState<Drama[]>([]);
   const [dramaItems, setDramaItems] = useState<Drama[]>([]);
   const [animeItems, setAnimeItems] = useState<Anime[]>([]);
-  const [komikItems, setKomikItems] = useState<Komik[]>([]);
   const [movieItems, setMovieItems] = useState<Movie[]>([]);
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -28,18 +25,16 @@ export function HomePage() {
 
   const loadData = async () => {
     setLoading(true);
-    const [vip, trending, anime, komik, movies] = await Promise.all([
+    const [vip, trending, anime, movies] = await Promise.all([
       fetchDramaBoxVIP(),
       fetchDramaBoxTrending(),
       fetchAnimeOngoing(1),
-      fetchKomikPopuler(1),
       fetchMovieBoxTrending(0),
     ]);
     
     setHeroItems(vip.slice(0, 5));
     setDramaItems(trending.slice(0, 12));
     setAnimeItems(anime.slice(0, 12));
-    setKomikItems(komik.slice(0, 12));
     setMovieItems(movies.slice(0, 12));
     setLoading(false);
   };
@@ -275,49 +270,6 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Komik Section */}
-      <section className="mt-12 px-4 md:px-8 lg:px-16">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-3xl font-bold text-white">Popular Komik</h2>
-          <Link to="/komik" className="text-red-500 hover:text-red-400 transition">
-            View All →
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-          {komikItems.map((item) => (
-            <Link
-              key={item.id}
-              to={`/komik/${item.slug || item.id}`}
-              className="group relative aspect-[2/3] rounded-lg overflow-hidden"
-            >
-              <img
-                src={item.thumbnail || item.cover}
-                alt={item.title}
-                className="w-full h-full object-cover transition group-hover:scale-105"
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition" />
-              <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-2 group-hover:translate-y-0 transition">
-                <h3 className="text-white font-semibold text-sm line-clamp-2">
-                  {item.title}
-                </h3>
-                {item.rating && (
-                  <div className="flex items-center gap-1 text-yellow-400 mt-1">
-                    <Star size={12} fill="currentColor" />
-                    <span className="text-xs">{item.rating}</span>
-                  </div>
-                )}
-              </div>
-              {item.chapter && (
-                <div className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
-                  {item.chapter}
-                </div>
-              )}
-            </Link>
-          ))}
-        </div>
-      </section>
     </div>
   );
 }
