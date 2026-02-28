@@ -78,6 +78,9 @@ export function HomePage() {
             src={currentHero.coverHorizontalUrl || currentHero.coverVerticalUrl}
             alt={currentHero.title}
             className="w-full h-full object-cover"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
           />
           
           <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12 lg:p-16">
@@ -161,6 +164,8 @@ export function HomePage() {
                 src={item.coverVerticalUrl}
                 alt={item.title}
                 className="w-full h-full object-cover transition group-hover:scale-105"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition" />
               <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-2 group-hover:translate-y-0 transition">
@@ -201,6 +206,8 @@ export function HomePage() {
                 src={item.coverVerticalUrl || item.poster}
                 alt={item.title}
                 className="w-full h-full object-cover transition group-hover:scale-105"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition" />
               <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-2 group-hover:translate-y-0 transition">
@@ -243,6 +250,8 @@ export function HomePage() {
                 src={item.thumbnail || item.cover}
                 alt={item.title}
                 className="w-full h-full object-cover transition group-hover:scale-105"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition" />
               <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-2 group-hover:translate-y-0 transition">
@@ -285,6 +294,8 @@ export function HomePage() {
                 src={item.thumbnail || item.cover}
                 alt={item.title}
                 className="w-full h-full object-cover transition group-hover:scale-105"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition" />
               <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-2 group-hover:translate-y-0 transition">

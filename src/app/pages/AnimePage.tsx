@@ -152,6 +152,8 @@ export function AnimePage() {
                 src={animeImage}
                 alt={animeTitle}
                 className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-500">
@@ -191,6 +193,8 @@ export function AnimePage() {
               src={animeImage}
               alt={animeTitle}
               className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-500">
@@ -332,6 +336,8 @@ export function AnimePage() {
                               src={anime.poster || anime.thumbnail || anime.cover}
                               alt={anime.title}
                               className="w-full h-full object-cover"
+                              loading="lazy"
+                              decoding="async"
                             />
                           ) : (
                             <div className="w-full h-full bg-gray-700 flex items-center justify-center text-xs text-gray-500">

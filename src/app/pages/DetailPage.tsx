@@ -171,6 +171,9 @@ export function DetailPage() {
             src={drama.coverHorizontalUrl || drama.coverVerticalUrl || 'https://via.placeholder.com/1920x1080'}
             alt={drama.title}
             className="w-full h-full object-cover"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
             onError={(e) => {
               e.currentTarget.src = 'https://via.placeholder.com/1920x1080?text=No+Image';
             }}
@@ -285,6 +288,9 @@ export function DetailPage() {
             src={anime.cover || anime.thumbnail || 'https://via.placeholder.com/1920x1080'}
             alt={anime.title}
             className="w-full h-full object-cover"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
           />
           
           <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 lg:p-16">
@@ -387,6 +393,9 @@ export function DetailPage() {
             src={komik.cover || komik.thumbnail || 'https://via.placeholder.com/1920x1080'}
             alt={komik.title}
             className="w-full h-full object-cover"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
           />
           
           <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 lg:p-16">
