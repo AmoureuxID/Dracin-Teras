@@ -47,6 +47,79 @@ const pickObject = (payload: unknown, keys: string[] = []): ApiRecord | null => 
   return null;
 };
 
+const toNumber = (value: unknown): number | undefined => {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string') {
+    const parsed = Number.parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  }
+  return undefined;
+};
+
+const yearFromDate = (value: unknown): string | undefined => {
+  if (typeof value !== 'string' || value.length < 4) return undefined;
+  return value.slice(0, 4);
+};
+
+const normalizeDrama = (item: ApiRecord): Drama => ({
+  id: String(item.id ?? item.bookId ?? item.dramaId ?? ''),
+  bookId: item.bookId ? String(item.bookId) : undefined,
+  title: String(item.title ?? item.bookName ?? item.name ?? 'Untitled'),
+  coverVerticalUrl:
+    item.coverVerticalUrl ?? item.coverWap ?? item.poster ?? item.cover?.url ?? item.cover ?? undefined,
+  coverHorizontalUrl:
+    item.coverHorizontalUrl ?? item.stills?.url ?? item.horizontalCover ?? item.coverWap ?? undefined,
+  introduction: typeof item.introduction === 'string' ? item.introduction : undefined,
+  score: toNumber(item.score ?? item.rating ?? item.imdbRatingValue),
+  category:
+    (typeof item.category === 'string' && item.category) ||
+    (typeof item.genre === 'string' && item.genre) ||
+    undefined,
+  year: (typeof item.year === 'string' && item.year) || yearFromDate(item.releaseDate),
+  source: item.source,
+});
+
+const normalizeMovie = (item: ApiRecord): Movie => ({
+  id: String(item.id ?? item.subjectId ?? ''),
+  subjectId: item.subjectId ? String(item.subjectId) : undefined,
+  title: String(item.title ?? item.name ?? 'Untitled'),
+  poster: item.poster ?? item.cover?.url ?? item.coverVerticalUrl ?? undefined,
+  coverVerticalUrl: item.coverVerticalUrl ?? item.cover?.url ?? item.poster ?? undefined,
+  coverHorizontalUrl: item.coverHorizontalUrl ?? item.stills?.url ?? item.cover?.url ?? undefined,
+  rating: toNumber(item.rating ?? item.score ?? item.imdbRatingValue),
+  year: (typeof item.year === 'string' && item.year) || yearFromDate(item.releaseDate),
+  category: (typeof item.category === 'string' && item.category) || (typeof item.genre === 'string' ? item.genre : undefined),
+  description: typeof item.description === 'string' ? item.description : undefined,
+});
+
+const normalizeAnime = (item: ApiRecord): Anime => ({
+  id: String(item.id ?? item.animeId ?? item.slug ?? ''),
+  slug: item.slug ? String(item.slug) : item.animeId ? String(item.animeId) : undefined,
+  title: String(item.title ?? item.name ?? 'Untitled'),
+  thumbnail: item.thumbnail ?? item.poster ?? item.cover ?? undefined,
+  cover: item.cover ?? item.poster ?? item.thumbnail ?? undefined,
+  episode: typeof item.episode === 'string' ? item.episode : undefined,
+  rating: toNumber(item.rating ?? item.score),
+  status: typeof item.status === 'string' ? item.status : undefined,
+  type: typeof item.type === 'string' ? item.type : undefined,
+});
+
+const normalizeKomik = (item: ApiRecord): Komik => ({
+  id: String(item.id ?? item.slug ?? ''),
+  slug: item.slug ? String(item.slug) : undefined,
+  title: String(item.title ?? item.name ?? 'Untitled'),
+  thumbnail: item.thumbnail ?? item.cover ?? undefined,
+  cover: item.cover ?? item.thumbnail ?? undefined,
+  chapter: typeof item.chapter === 'string' ? item.chapter : undefined,
+  rating: toNumber(item.rating ?? item.score),
+  type: typeof item.type === 'string' ? item.type : undefined,
+});
+
+const normalizeDramaList = (items: any[]): Drama[] => items.filter(isRecord).map(normalizeDrama);
+const normalizeMovieList = (items: any[]): Movie[] => items.filter(isRecord).map(normalizeMovie);
+const normalizeAnimeList = (items: any[]): Anime[] => items.filter(isRecord).map(normalizeAnime);
+const normalizeKomikList = (items: any[]): Komik[] => items.filter(isRecord).map(normalizeKomik);
+
 export interface Drama {
   id: string;
   bookId?: string;
@@ -382,7 +455,7 @@ export async function fetchDramaBoxVIP(): Promise<Drama[]> {
     });
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
-    const dramas = pickArray(data, ['dramaList', 'bookList', 'list']);
+    const dramas = normalizeDramaList(pickArray(data, ['dramaList', 'bookList', 'list']));
     return dramas.length > 0 ? dramas : MOCK_DRAMAS;
   } catch (error) {
     return MOCK_DRAMAS.slice(0, 5);
@@ -396,7 +469,7 @@ export async function fetchDramaBoxTrending(): Promise<Drama[]> {
     });
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
-    const dramas = pickArray(data, ['dramaList', 'bookList', 'list']);
+    const dramas = normalizeDramaList(pickArray(data, ['dramaList', 'bookList', 'list']));
     return dramas.length > 0 ? dramas : MOCK_DRAMAS;
   } catch (error) {
     return MOCK_DRAMAS;
@@ -410,7 +483,7 @@ export async function fetchDramaBoxLatest(): Promise<Drama[]> {
     });
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
-    const dramas = pickArray(data, ['dramaList', 'bookList', 'list']);
+    const dramas = normalizeDramaList(pickArray(data, ['dramaList', 'bookList', 'list']));
     return dramas.length > 0 ? dramas : MOCK_DRAMAS;
   } catch (error) {
     return MOCK_DRAMAS;
@@ -424,7 +497,7 @@ export async function fetchDramaBoxRandom(): Promise<Drama[]> {
     });
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
-    const dramas = pickArray(data, ['dramaList', 'bookList', 'list']);
+    const dramas = normalizeDramaList(pickArray(data, ['dramaList', 'bookList', 'list']));
     return dramas.length > 0 ? dramas : MOCK_DRAMAS;
   } catch (error) {
     return MOCK_DRAMAS;
@@ -438,7 +511,7 @@ export async function fetchDramaBoxForYou(): Promise<Drama[]> {
     });
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
-    const dramas = pickArray(data, ['dramaList', 'bookList', 'list']);
+    const dramas = normalizeDramaList(pickArray(data, ['dramaList', 'bookList', 'list']));
     return dramas.length > 0 ? dramas : MOCK_DRAMAS;
   } catch (error) {
     return MOCK_DRAMAS;
@@ -452,7 +525,7 @@ export async function fetchDramaBoxDubindo(classify: string = 'terbaru', page: n
     });
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
-    const dramas = pickArray(data, ['dramaList', 'bookList', 'list']);
+    const dramas = normalizeDramaList(pickArray(data, ['dramaList', 'bookList', 'list']));
     return dramas.length > 0 ? dramas : MOCK_DRAMAS;
   } catch (error) {
     return MOCK_DRAMAS;
@@ -501,7 +574,7 @@ export async function searchDramas(query: string): Promise<Drama[]> {
     });
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
-    return pickArray(data, ['dramaList', 'bookList', 'list']);
+    return normalizeDramaList(pickArray(data, ['dramaList', 'bookList', 'list']));
   } catch (error) {
     // Filter mock data based on query
     return MOCK_DRAMAS.filter(drama =>
@@ -531,7 +604,7 @@ export async function fetchMovieBoxTrending(page: number = 0): Promise<Movie[]> 
     });
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
-    const movies = pickArray(data, ['subjectList', 'movieList', 'list']);
+    const movies = normalizeMovieList(pickArray(data, ['subjectList', 'movieList', 'list']));
     return movies.length > 0 ? movies : MOCK_MOVIES;
   } catch (error) {
     return MOCK_MOVIES;
@@ -545,7 +618,7 @@ export async function searchMovieBox(query: string, page: number = 0): Promise<M
     });
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
-    return pickArray(data, ['subjectList', 'movieList', 'list']);
+    return normalizeMovieList(pickArray(data, ['subjectList', 'movieList', 'list']));
   } catch (error) {
     return MOCK_MOVIES.filter(m => m.title.toLowerCase().includes(query.toLowerCase()));
   }
@@ -574,7 +647,8 @@ export async function fetchAnimeOngoing(page: number = 1): Promise<Anime[]> {
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
     // Key utama adalah data.animeList sesuai dokumentasi
-    return data.data?.animeList || MOCK_ANIME;
+    const list = normalizeAnimeList(data.data?.animeList || []);
+    return list.length > 0 ? list : MOCK_ANIME;
   } catch (error) {
     return MOCK_ANIME;
   }
@@ -588,7 +662,8 @@ export async function fetchAnimeCompleted(page: number = 1): Promise<Anime[]> {
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
     // Key utama adalah data.animeList sesuai dokumentasi
-    return data.data?.animeList || MOCK_ANIME;
+    const list = normalizeAnimeList(data.data?.animeList || []);
+    return list.length > 0 ? list : MOCK_ANIME;
   } catch (error) {
     return MOCK_ANIME;
   }
@@ -624,7 +699,7 @@ export async function searchAnime(query: string, page: number = 1): Promise<Anim
     });
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
-    return pickArray(data, ['animeList', 'list']);
+    return normalizeAnimeList(pickArray(data, ['animeList', 'list']));
   } catch (error) {
     return MOCK_ANIME.filter(anime =>
       anime.title.toLowerCase().includes(query.toLowerCase())
@@ -671,7 +746,8 @@ export async function fetchAnimeByGenre(slug: string, page: number = 1): Promise
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
     // Mungkin ada animeList di data
-    return data.data?.animeList || data.data || MOCK_ANIME;
+    const list = normalizeAnimeList(data.data?.animeList || data.data || []);
+    return list.length > 0 ? list : MOCK_ANIME;
   } catch (error) {
     return MOCK_ANIME;
   }
@@ -701,7 +777,7 @@ export async function fetchKomikTop(): Promise<Komik[]> {
     });
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
-    const komik = pickArray(data, ['komikList', 'list']);
+    const komik = normalizeKomikList(pickArray(data, ['komikList', 'list']));
     return komik.length > 0 ? komik : MOCK_KOMIK;
   } catch (error) {
     return MOCK_KOMIK;
@@ -715,7 +791,7 @@ export async function fetchKomikLatest(page: number = 1): Promise<Komik[]> {
     });
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
-    const komik = pickArray(data, ['komikList', 'list']);
+    const komik = normalizeKomikList(pickArray(data, ['komikList', 'list']));
     return komik.length > 0 ? komik : MOCK_KOMIK;
   } catch (error) {
     return MOCK_KOMIK;
@@ -729,7 +805,7 @@ export async function fetchKomikPopuler(page: number = 1): Promise<Komik[]> {
     });
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
-    const komik = pickArray(data, ['komikList', 'list']);
+    const komik = normalizeKomikList(pickArray(data, ['komikList', 'list']));
     return komik.length > 0 ? komik : MOCK_KOMIK;
   } catch (error) {
     return MOCK_KOMIK;
