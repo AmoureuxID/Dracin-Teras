@@ -302,7 +302,17 @@ export function WatchPage() {
 
         case 'anime':
           if (!episodeParam) break;
-          const episodeResponse = await fetch(`${ANIME_API_URL}/episode/${episodeParam}`);
+          const animeDetailResp = await fetch(`${ANIME_API_URL}/anime/${contentId}`);
+          let episodeIdToFetch = episodeParam;
+          if (animeDetailResp.ok) {
+            const animeJson = await animeDetailResp.json();
+            const episodeList = animeJson?.data?.episodeList || animeJson?.data?.episodes || [];
+            const targetEpisode = episodeList.find((ep: any) => String(ep.episodeNumber) === String(episodeParam) || String(ep.number) === String(episodeParam) || String(ep.episode) === String(episodeParam));
+            if (targetEpisode?.episodeId) {
+              episodeIdToFetch = targetEpisode.episodeId;
+            }
+          }
+          const episodeResponse = await fetch(`${ANIME_API_URL}/episode/${episodeIdToFetch}`);
           if (episodeResponse.ok) {
             const json = await episodeResponse.json();
             const qualities = json?.data?.server?.qualities || json?.server?.qualities || [];

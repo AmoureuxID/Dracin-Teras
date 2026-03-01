@@ -731,9 +731,10 @@ export async function fetchAnimeDetail(slug: string): Promise<AnimeDetail | null
           const episodeNumberRaw =
             episode.episodeNumber ?? episode.number ?? episode.episode ?? episode.index ?? index + 1;
           const episodeNumberParsed = Number.parseInt(String(episodeNumberRaw));
+          const shortId = Number.isFinite(episodeNumberParsed) ? episodeNumberParsed : index + 1;
           return {
-            id: String(episode.id ?? episode.episodeId ?? episode.episode_id ?? episodeNumberRaw ?? index + 1),
-            episodeNumber: Number.isFinite(episodeNumberParsed) ? episodeNumberParsed : index + 1,
+            id: String(shortId),
+            episodeNumber: shortId,
             title: typeof episode.title === 'string' ? episode.title : undefined,
             thumbnail: episode.thumbnail ?? episode.cover ?? episode.poster ?? undefined,
           };
