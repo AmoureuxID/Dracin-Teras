@@ -168,7 +168,7 @@ export function WatchPage() {
           break;
         
         case 'netshort':
-          const netshortDetail = await fetch(`${API_BASE_URL}/netshort/detail?shortPlayId=${contentId}`);
+          const netshortDetail = await fetch(`${API_BASE_URL}/netshort/allepisode?shortPlayId=${contentId}`);
           if (netshortDetail.ok) {
             const json = await netshortDetail.json();
             episodesData = extractEpisodes(json);
@@ -289,9 +289,9 @@ export function WatchPage() {
           break;
 
         case 'netshort':
-          const netshortDetail = await fetch(`${API_BASE_URL}/netshort/detail?shortPlayId=${contentId}`);
-          if (netshortDetail.ok) {
-            const json = await netshortDetail.json();
+          const netshortDetail2 = await fetch(`${API_BASE_URL}/netshort/allepisode?shortPlayId=${contentId}`);
+          if (netshortDetail2.ok) {
+            const json = await netshortDetail2.json();
             const allEps = extractEpisodes(json);
             const episode = allEps.find((ep: any) => ep.episodeNumber === currentEpisode || ep.number === currentEpisode);
             if (episode) {

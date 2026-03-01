@@ -107,7 +107,7 @@ export function DetailPage() {
           break;
 
         case 'flickreels':
-          const flickreelsResponse = await fetch(`${API_BASE_URL}/flickreels/detail?id=${bookId}`);
+          const flickreelsResponse = await fetch(`${API_BASE_URL}/flickreels/detailAndAllEpisode?id=${bookId}`);
           if (flickreelsResponse.ok) {
             const json = await flickreelsResponse.json();
             dramaData = extractObject(json);
@@ -116,7 +116,7 @@ export function DetailPage() {
           break;
 
         case 'freereels':
-          const freereelsResponse = await fetch(`${API_BASE_URL}/freereels/detail?id=${bookId}`);
+          const freereelsResponse = await fetch(`${API_BASE_URL}/freereels/detailAndAllEpisode?key=${bookId}`);
           if (freereelsResponse.ok) {
             const json = await freereelsResponse.json();
             dramaData = extractObject(json);

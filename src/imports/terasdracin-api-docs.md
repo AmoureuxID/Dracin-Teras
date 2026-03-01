@@ -54,6 +54,7 @@ Di kode:
 
 ### Komik (HYBRID, currently DIRECT)
 
+#### Bacakomik
 - `GET /comic/bacakomik/top`
 - `GET /comic/bacakomik/latest/{page}`
 - `GET /comic/bacakomik/populer/{page}`
@@ -66,7 +67,14 @@ Di kode:
 - `GET /comic/bacakomik/only/manhua/{page}`
 - `GET /comic/bacakomik/komikberwarna/{page}`
 - `GET /comic/bacakomik/chapter/{slug}`
+
+#### Pustaka (Komiku) - Terpisah dari Bacakomik
 - `GET /comic/pustaka/{page}`
+- `GET /comic/comic/{slug}`
+- `GET /comic/chapter/{slug}`
+- `GET /comic/chapter/{slug}/navigation`
+- `GET /comic/genre/{genre}`
+- `GET /comic/type/{type}`
 
 Semua dipanggil direct dari `API_BASE_URL` melalui helper di `src/app/utils/api.ts`.
 
@@ -76,7 +84,7 @@ Semua dipanggil direct dari `API_BASE_URL` melalui helper di `src/app/utils/api.
   - `GET /dramabox/vip`
   - `GET /dramabox/trending`
   - `GET /dramabox/latest`
-  - `GET /dramabox/random`
+  - `GET /dramabox/randomdrama`
   - `GET /dramabox/foryou`
   - `GET /dramabox/dubindo?classify={classify}&page={page}`
   - `GET /dramabox/search?query={query}`
@@ -98,12 +106,13 @@ Semua dipanggil direct dari `API_BASE_URL` melalui helper di `src/app/utils/api.
   - `GET /flickreels/latest`
   - `GET /flickreels/hotrank`
   - `GET /flickreels/search?query={query}`
-  - `GET /flickreels/detail?id={id}`
+  - `GET /flickreels/detailAndAllEpisode?id={id}`
 - FreeReels:
   - `GET /freereels/foryou`
-  - `GET /freereels/home`
+  - `GET /freereels/homepage`
+  - `GET /freereels/animepage`
   - `GET /freereels/search?query={query}`
-  - `GET /freereels/detail?id={id}`
+  - `GET /freereels/detailAndAllEpisode?key={key}`
 - NetShort:
   - `GET /netshort/theaters`
 
@@ -113,6 +122,8 @@ Semua dipanggil direct dari `API_BASE_URL` melalui helper di `src/app/utils/api.
 - `GET /moviebox/trending?page={page}`
 - `GET /moviebox/search?query={query}&page={page}`
 - `GET /moviebox/detail?subjectId={subjectId}`
+- `GET /moviebox/sources?subjectId={subjectId}&season={season}&episode={episode}`
+- `GET /moviebox/generate-link-stream-video?url={url}`
 
 ### Endpoint Sensitif (BACKEND)
 

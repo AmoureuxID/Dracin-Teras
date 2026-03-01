@@ -676,9 +676,102 @@ export async function fetchAnimeDetail(slug: string): Promise<AnimeDetail | null
     });
     if (!response.ok) throw new Error('API not available');
     const data = await response.json();
-    return data.data || null;
+    const detail = isRecord(data?.data) ? data.data : null;
+    if (!detail) return null;
+
+    const synopsisValue = detail.synopsis ?? detail.description ?? detail.story;
+    let synopsis: string | undefined;
+    if (typeof synopsisValue === 'string') {
+      synopsis = synopsisValue;
+    } else if (Array.isArray(synopsisValue)) {
+      synopsis = synopsisValue.filter((item) => typeof item === 'string').join('\n\n') || undefined;
+    } else if (isRecord(synopsisValue)) {
+      const paragraphs = pickArray(synopsisValue, ['paragraphs', 'paragraph', 'lines']);
+      synopsis =
+        paragraphs.filter((item) => typeof item === 'string').join('\n\n') ||
+        (typeof synopsisValue.text === 'string' ? synopsisValue.text : undefined);
+    }
+
+    const rawGenres = detail.genres ?? detail.genreList ?? detail.genre ?? detail.tags;
+    const genres = Array.isArray(rawGenres)
+      ? rawGenres
+          .map((item) => {
+            if (typeof item === 'string') return item;
+            if (isRecord(item)) return String(item.name ?? item.title ?? item.slug ?? '');
+            return '';
+          })
+          .filter((item) => item.length > 0)
+      : typeof rawGenres === 'string'
+      ? [rawGenres]
+      : undefined;
+
+    const studioValue = detail.studio ?? detail.studios;
+    const studio =
+      typeof studioValue === 'string'
+        ? studioValue
+        : Array.isArray(studioValue)
+        ? studioValue
+            .map((item) => {
+              if (typeof item === 'string') return item;
+              if (isRecord(item)) return String(item.name ?? item.title ?? '');
+              return '';
+            })
+            .filter((item) => item.length > 0)
+            .join(', ') || undefined
+        : undefined;
+
+    const episodeList = pickArray(detail, ['episodeList', 'episodes', 'episode_list', 'episode']);
+    let episodes: AnimeEpisode[] | undefined;
+    if (episodeList.length > 0) {
+      episodes = episodeList
+        .map((episode, index) => {
+          if (!isRecord(episode)) {
+            return { id: String(episode), episodeNumber: index + 1 };
+          }
+          const episodeNumberRaw =
+            episode.episodeNumber ?? episode.number ?? episode.episode ?? episode.index ?? index + 1;
+          const episodeNumberParsed = Number.parseInt(String(episodeNumberRaw));
+          return {
+            id: String(episode.id ?? episode.episodeId ?? episode.episode_id ?? episodeNumberRaw ?? index + 1),
+            episodeNumber: Number.isFinite(episodeNumberParsed) ? episodeNumberParsed : index + 1,
+            title: typeof episode.title === 'string' ? episode.title : undefined,
+            thumbnail: episode.thumbnail ?? episode.cover ?? episode.poster ?? undefined,
+          };
+        })
+        .filter(Boolean);
+    } else if (typeof detail.episodes === 'number' && detail.episodes > 0) {
+      episodes = Array.from({ length: detail.episodes }, (_, index) => ({
+        id: String(index + 1),
+        episodeNumber: index + 1,
+      }));
+    } else if (typeof detail.totalEpisodes === 'number' && detail.totalEpisodes > 0) {
+      episodes = Array.from({ length: detail.totalEpisodes }, (_, index) => ({
+        id: String(index + 1),
+        episodeNumber: index + 1,
+      }));
+    }
+
+    const rating = toNumber(detail.rating ?? detail.score?.value ?? detail.score);
+    const releaseDate =
+      typeof detail.releaseDate === 'string'
+        ? detail.releaseDate
+        : typeof detail.aired === 'string'
+        ? detail.aired
+        : undefined;
+
+    const base = normalizeAnime(detail);
+
+    return {
+      ...base,
+      rating: rating ?? base.rating,
+      synopsis,
+      genres,
+      studio,
+      episodes,
+      releaseDate,
+    };
   } catch (error) {
-    const mockAnime = MOCK_ANIME.find(a => a.slug === slug);
+    const mockAnime = MOCK_ANIME.find((a) => a.slug === slug);
     if (mockAnime) {
       return {
         ...mockAnime,
@@ -1115,7 +1208,7 @@ export async function fetchFreeReelsForYou(page: number = 1): Promise<Drama[]> {
 
 export async function fetchFreeReelsHome(page: number = 1) {
   try {
-    const response = await fetch(`${API_BASE_URL}/freereels/home?page=${page}`, {
+    const response = await fetch(`${API_BASE_URL}/freereels/homepage?page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
