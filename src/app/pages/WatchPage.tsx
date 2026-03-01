@@ -42,6 +42,16 @@ export function WatchPage() {
     );
   };
 
+  const normalizeDramaBoxEpisodes = (episodes: any[]): any[] => {
+    return episodes.map((ep: any, index: number) => ({
+      ...ep,
+      episodeNumber: ep.chapterIndex + 1,
+      number: ep.chapterIndex + 1,
+      id: ep.chapterId,
+      title: ep.chapterName,
+    }));
+  };
+
   const extractWatchUrl = (payload: any): string | undefined => {
     const fromData = payload?.data;
     return payload?.videoUrl || payload?.url || fromData?.videoUrl || fromData?.url;
@@ -59,21 +69,20 @@ export function WatchPage() {
 
   const pickDramaBoxUrl = (episodeData: any) => {
     const cdnList = episodeData?.cdnList || episodeData?.cdn_list || [];
-    const preferredCdn =
-      cdnList.find((cdn: any) => cdn?.isDefault || cdn?.default) || cdnList[0];
-    const pathList =
-      preferredCdn?.videoPathList ||
-      preferredCdn?.video_path_list ||
-      preferredCdn?.videoPaths ||
-      [];
-    const preferredPath =
-      pathList.find((path: any) => `${path?.quality || ''}`.includes('720')) || pathList[0];
-    return (
-      preferredPath?.videoPath ||
-      preferredPath?.url ||
-      episodeData?.videoUrl ||
-      episodeData?.url
-    );
+    if (!Array.isArray(cdnList) || cdnList.length === 0) return undefined;
+    
+    const preferredCdn = cdnList.find((cdn: any) => cdn?.isDefault === 1) || cdnList[0];
+    if (!preferredCdn) return undefined;
+    
+    const pathList = preferredCdn?.videoPathList || preferredCdn?.video_path_list || [];
+    if (!Array.isArray(pathList) || pathList.length === 0) return undefined;
+    
+    const freePath = pathList.find((path: any) => path?.isVipEquity !== 1);
+    const defaultPath = pathList.find((path: any) => path?.isDefault === 1);
+    const quality720 = pathList.find((path: any) => path?.quality === 720);
+    const preferredPath = freePath || defaultPath || quality720 || pathList[0];
+    
+    return preferredPath?.videoPath || preferredPath?.url;
   };
 
   const pickReelshortUrl = (payload: any) => {
@@ -180,7 +189,8 @@ export function WatchPage() {
           const response = await fetch(`${API_BASE_URL}/dramabox/allepisode?bookId=${contentId}`);
           if (response.ok) {
             const json = await response.json();
-            episodesData = extractEpisodes(json);
+            const rawEpisodes = extractEpisodes(json);
+            episodesData = normalizeDramaBoxEpisodes(rawEpisodes);
           }
           break;
 
@@ -259,7 +269,13 @@ export function WatchPage() {
             break;
           }
           const episodes = extractEpisodes(parsed.data);
-          const episode = episodes.find((ep: any) => ep.episodeNumber === currentEpisode || ep.number === currentEpisode);
+          const episodeNumber = Number(currentEpisode);
+          const episode = episodes.find((ep: any) => 
+            ep.chapterIndex === episodeNumber - 1 || 
+            ep.chapterIndex === episodeNumber ||
+            ep.episodeNumber === currentEpisode || 
+            ep.number === currentEpisode
+          );
           if (episode) {
             videoData = pickDramaBoxUrl(episode);
           }
