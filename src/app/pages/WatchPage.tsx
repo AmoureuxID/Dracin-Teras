@@ -24,6 +24,7 @@ export function WatchPage() {
   const [muted, setMuted] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [isIframe, setIsIframe] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout>();
 
@@ -86,6 +87,37 @@ export function WatchPage() {
   const toSafeNumber = (value: any, fallback: number) => {
     const parsed = Number.parseInt(String(value ?? ''));
     return Number.isFinite(parsed) ? parsed : fallback;
+  };
+
+  const isValidVideoUrl = (url: string | undefined | null): boolean => {
+    if (!url || typeof url !== 'string') return false;
+    const trimmed = url.trim();
+    if (trimmed === '') return false;
+    if (trimmed.startsWith('http://localhost') || trimmed.startsWith('https://')) {
+      return true;
+    }
+    return false;
+  };
+
+  const isHtmlResponse = (text: string): boolean => {
+    const trimmed = text.trim().toLowerCase();
+    return trimmed.startsWith('<!doctype') || trimmed.startsWith('<html') || trimmed.startsWith('<!html');
+  };
+
+  const safeJsonParse = async (response: Response): Promise<{ ok: boolean; data: any; error?: string }> => {
+    if (!response.ok) {
+      return { ok: false, data: null, error: `HTTP ${response.status}: ${response.statusText}` };
+    }
+    const text = await response.text();
+    if (isHtmlResponse(text)) {
+      return { ok: false, data: null, error: 'Received HTML instead of JSON - upstream may be down' };
+    }
+    try {
+      const json = JSON.parse(text);
+      return { ok: true, data: json };
+    } catch {
+      return { ok: false, data: null, error: 'Failed to parse JSON response' };
+    }
   };
 
   const extractMovieBoxEpisodes = (payload: any) => {
@@ -213,89 +245,107 @@ export function WatchPage() {
 
   const loadVideo = async () => {
     setLoading(true);
+    setError(null);
     try {
       let videoData: any = null;
       setIsIframe(false);
 
       switch (source) {
-        case 'dramabox':
+        case 'dramabox': {
           const dramaboxEps = await fetch(`${API_BASE_URL}/dramabox/allepisode?bookId=${contentId}`);
-          if (dramaboxEps.ok) {
-            const json = await dramaboxEps.json();
-            const episodes = extractEpisodes(json);
-            const episode = episodes.find((ep: any) => ep.episodeNumber === currentEpisode || ep.number === currentEpisode);
-            if (episode) {
-              videoData = pickDramaBoxUrl(episode);
-            }
+          const parsed = await safeJsonParse(dramaboxEps);
+          if (!parsed.ok) {
+            setError(`DramaBox: ${parsed.error}`);
+            break;
+          }
+          const episodes = extractEpisodes(parsed.data);
+          const episode = episodes.find((ep: any) => ep.episodeNumber === currentEpisode || ep.number === currentEpisode);
+          if (episode) {
+            videoData = pickDramaBoxUrl(episode);
           }
           break;
+        }
 
-        case 'reelshort':
+        case 'reelshort': {
           const reelshortResponse = await fetch(`${API_BASE_URL}/reelshort/watch?bookId=${contentId}&episodeNumber=${currentEpisode}`);
-          if (reelshortResponse.ok) {
-            const json = await reelshortResponse.json();
-            videoData = pickReelshortUrl(json) || extractWatchUrl(json);
+          const parsed = await safeJsonParse(reelshortResponse);
+          if (!parsed.ok) {
+            setError(`Reelshort: ${parsed.error}`);
+            break;
           }
+          videoData = pickReelshortUrl(parsed.data) || extractWatchUrl(parsed.data);
           break;
+        }
 
-        case 'melolo':
+        case 'melolo': {
           const meloloDetail = await fetch(`${API_BASE_URL}/melolo/detail?bookId=${contentId}`);
-          if (meloloDetail.ok) {
-            const json = await meloloDetail.json();
-            const episode = extractEpisodes(json).find((ep: any) => ep.episodeNumber === currentEpisode);
-            if (episode && episode.videoId) {
-              const streamResponse = await fetch(`${API_BASE_URL}/melolo/stream?videoId=${episode.videoId}`);
-              if (streamResponse.ok) {
-                const streamJson = await streamResponse.json();
-                const rawModel = streamJson?.data?.video_model || streamJson?.video_model;
-                if (typeof rawModel === 'string') {
-                  const parsedModel = JSON.parse(rawModel);
-                  const videoList = parsedModel?.video_list || [];
-                  const mainUrl = videoList[0]?.main_url || videoList[0]?.mainUrl;
-                  if (mainUrl) {
-                    videoData = decodeBase64(mainUrl);
-                  }
-                }
-                if (!videoData) {
-                  videoData = extractWatchUrl(streamJson);
-                }
+          const parsed = await safeJsonParse(meloloDetail);
+          if (!parsed.ok) {
+            setError(`Melolo: ${parsed.error}`);
+            break;
+          }
+          const episode = extractEpisodes(parsed.data).find((ep: any) => ep.episodeNumber === currentEpisode);
+          if (episode && episode.videoId) {
+            const streamResponse = await fetch(`${API_BASE_URL}/melolo/stream?videoId=${episode.videoId}`);
+            const streamParsed = await safeJsonParse(streamResponse);
+            if (!streamParsed.ok) {
+              setError(`Melolo Stream: ${streamParsed.error}`);
+              break;
+            }
+            const rawModel = streamParsed.data?.data?.video_model || streamParsed.data?.video_model;
+            if (typeof rawModel === 'string') {
+              const parsedModel = JSON.parse(rawModel);
+              const videoList = parsedModel?.video_list || [];
+              const mainUrl = videoList[0]?.main_url || videoList[0]?.mainUrl;
+              if (mainUrl) {
+                videoData = decodeBase64(mainUrl);
               }
             }
+            if (!videoData) {
+              videoData = extractWatchUrl(streamParsed.data);
+            }
           }
           break;
+        }
 
         case 'flickreels':
-        case 'freereels':
+        case 'freereels': {
           const reelsDetail = await fetch(`${API_BASE_URL}/${source}/detail?id=${contentId}`);
-          if (reelsDetail.ok) {
-            const json = await reelsDetail.json();
-            const allEps = extractEpisodes(json);
-            const episode = allEps.find((ep: any) => ep.episodeNumber === currentEpisode || ep.number === currentEpisode);
-            if (episode) {
-              if (source === 'freereels') {
-                videoData =
-                  episode.external_audio_h264_m3u8 ||
-                  episode.external_audio_h265_m3u8 ||
-                  episode.videoUrl ||
-                  episode.url;
-              } else {
-                videoData = episode.videoUrl || episode.url || episode?.raw?.videoUrl;
-              }
+          const parsed = await safeJsonParse(reelsDetail);
+          if (!parsed.ok) {
+            setError(`${source}: ${parsed.error}`);
+            break;
+          }
+          const allEps = extractEpisodes(parsed.data);
+          const episode = allEps.find((ep: any) => ep.episodeNumber === currentEpisode || ep.number === currentEpisode);
+          if (episode) {
+            if (source === 'freereels') {
+              videoData =
+                episode.external_audio_h264_m3u8 ||
+                episode.external_audio_h265_m3u8 ||
+                episode.videoUrl ||
+                episode.url;
+            } else {
+              videoData = episode.videoUrl || episode.url || episode?.raw?.videoUrl;
             }
           }
           break;
+        }
 
-        case 'netshort':
+        case 'netshort': {
           const netshortDetail2 = await fetch(`${API_BASE_URL}/netshort/allepisode?shortPlayId=${contentId}`);
-          if (netshortDetail2.ok) {
-            const json = await netshortDetail2.json();
-            const allEps = extractEpisodes(json);
-            const episode = allEps.find((ep: any) => ep.episodeNumber === currentEpisode || ep.number === currentEpisode);
-            if (episode) {
-              videoData = episode.videoUrl || episode.url;
-            }
+          const parsed = await safeJsonParse(netshortDetail2);
+          if (!parsed.ok) {
+            setError(`Netshort: ${parsed.error}`);
+            break;
+          }
+          const allEps = extractEpisodes(parsed.data);
+          const episode = allEps.find((ep: any) => ep.episodeNumber === currentEpisode || ep.number === currentEpisode);
+          if (episode) {
+            videoData = episode.videoUrl || episode.url;
           }
           break;
+        }
 
         case 'anime':
           if (!episodeParam) break;
@@ -328,42 +378,47 @@ export function WatchPage() {
             setVideoUrl(videoData);
           }
           break;
-        case 'moviebox':
+        case 'moviebox': {
           const sourcesResponse = await fetch(
             `${API_BASE_URL}/moviebox/sources?subjectId=${contentId}&season=${currentSeason}&episode=${currentEpisode}`,
           );
-          if (sourcesResponse.ok) {
-            const json = await sourcesResponse.json();
-            const payload = json?.data || json;
-            const downloads = payload?.downloads || payload?.downloadList || payload?.videoList || [];
-            let bestDownload = downloads[0];
-            if (Array.isArray(downloads) && downloads.length > 0) {
-              bestDownload = downloads.reduce((prev: any, curr: any) => {
-                const prevRes = Number(prev?.resolution ?? prev?.quality ?? 0);
-                const currRes = Number(curr?.resolution ?? curr?.quality ?? 0);
-                return currRes > prevRes ? curr : prev;
-              }, downloads[0]);
-            }
-            const rawUrl = bestDownload?.url || bestDownload?.directUrl;
-            if (rawUrl) {
-              const generateResponse = await fetch(
-                `${API_BASE_URL}/moviebox/generate-link-stream-video?url=${encodeURIComponent(rawUrl)}`,
-              );
-              if (generateResponse.ok) {
-                const generateJson = await generateResponse.json();
-                videoData = generateJson?.streamUrl || generateJson?.data?.streamUrl || rawUrl;
-              } else {
-                videoData = rawUrl;
-              }
+          const parsed = await safeJsonParse(sourcesResponse);
+          if (!parsed.ok) {
+            setError(`MovieBox: ${parsed.error}`);
+            break;
+          }
+          const payload = parsed.data?.data || parsed.data;
+          const downloads = payload?.downloads || payload?.downloadList || payload?.videoList || [];
+          let bestDownload = downloads[0];
+          if (Array.isArray(downloads) && downloads.length > 0) {
+            bestDownload = downloads.reduce((prev: any, curr: any) => {
+              const prevRes = Number(prev?.resolution ?? prev?.quality ?? 0);
+              const currRes = Number(curr?.resolution ?? curr?.quality ?? 0);
+              return currRes > prevRes ? curr : prev;
+            }, downloads[0]);
+          }
+          const rawUrl = bestDownload?.url || bestDownload?.directUrl;
+          if (rawUrl) {
+            const generateResponse = await fetch(
+              `${API_BASE_URL}/moviebox/generate-link-stream-video?url=${encodeURIComponent(rawUrl)}`,
+            );
+            if (generateResponse.ok) {
+              const generateJson = await generateResponse.json();
+              videoData = generateJson?.streamUrl || generateJson?.data?.streamUrl || rawUrl;
+            } else {
+              videoData = rawUrl;
             }
           }
           break;
+        }
       }
 
       if (!videoData && source !== 'anime') {
-        // Fallback to demo video
-        setVideoUrl('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
-        setIsIframe(false);
+        if (error) {
+          setError(error);
+        } else {
+          setError('Video not found for this episode');
+        }
         return;
       }
 
@@ -380,11 +435,9 @@ export function WatchPage() {
         setVideoUrl(getDirectUrl(videoData));
         return;
       }
-    } catch (error) {
-      console.error('Error loading video:', error);
-      // Fallback video
-      setVideoUrl('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
-      setIsIframe(false);
+    } catch (err) {
+      console.error('Error loading video:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load video');
     } finally {
       setLoading(false);
     }
@@ -475,6 +528,20 @@ export function WatchPage() {
         {loading ? (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-white text-xl">Loading video...</div>
+          </div>
+        ) : error ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0a0a0a]">
+            <div className="text-red-500 text-xl font-semibold mb-2">Failed to Load Video</div>
+            <div className="text-white/60 text-center max-w-md px-4">{error}</div>
+            <button
+              onClick={() => {
+                setError(null);
+                loadVideo();
+              }}
+              className="mt-4 px-6 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition"
+            >
+              Retry
+            </button>
           </div>
         ) : (
           <>
