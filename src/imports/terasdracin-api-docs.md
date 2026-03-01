@@ -92,7 +92,7 @@ Semua dipanggil direct dari `API_BASE_URL` melalui helper di `src/app/utils/api.
   - `GET /dramabox/latest`
   - `GET /dramabox/randomdrama`
   - `GET /dramabox/foryou`
-  - `GET /dramabox/dubindo?classify={classify}&page={page}`
+  - `GET /dramabox/dubindo?classify={terpopuler|terbaru}&page={page}`
   - `GET /dramabox/search?query={query}`
   - `GET /dramabox/detail/{bookId}`
   - `GET /dramabox/allepisode/{bookId}`

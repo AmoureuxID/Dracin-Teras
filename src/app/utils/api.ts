@@ -518,9 +518,10 @@ export async function fetchDramaBoxForYou(page: number = 1): Promise<Drama[]> {
   }
 }
 
-export async function fetchDramaBoxDubindo(classify: string = 'terbaru', page: number = 1): Promise<Drama[]> {
+export async function fetchDramaBoxDubindo(classify: 'terpopuler' | 'terbaru' = 'terbaru', page: number = 1): Promise<Drama[]> {
+  const validClassify = classify === 'terpopuler' ? 'terpopuler' : 'terbaru';
   try {
-    const response = await fetch(`${API_BASE_URL}/dramabox/dubindo?classify=${classify}&page=${page}`, {
+    const response = await fetch(`${API_BASE_URL}/dramabox/dubindo?classify=${validClassify}&page=${page}`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
