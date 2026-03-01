@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, Link, useSearchParams, useLocation } from 'react-router';
 import { ChevronLeft, ChevronRight, Settings, Volume2, VolumeX, Maximize, Play, Pause } from 'lucide-react';
-import { API_BASE_URL, BACKEND_API_BASE_URL, ANIME_API_URL } from '../utils/env';
+import { API_BASE_URL, ANIME_API_URL } from '../utils/env';
 
 export function WatchPage() {
   const { id, slug, episode } = useParams<{ id?: string; slug?: string; episode?: string }>();
@@ -54,10 +54,7 @@ export function WatchPage() {
     }
   };
 
-  const buildProxyUrl = (url: string, referer?: string) => {
-    const base = `${BACKEND_API_BASE_URL}/proxy/video?url=${encodeURIComponent(url)}`;
-    return referer ? `${base}&referer=${encodeURIComponent(referer)}` : base;
-  };
+  const getDirectUrl = (url: string) => url;
 
   const pickDramaBoxUrl = (episodeData: any) => {
     const cdnList = episodeData?.cdnList || episodeData?.cdn_list || [];
@@ -372,8 +369,7 @@ export function WatchPage() {
 
       if (videoData && source !== 'anime') {
         if (source === 'flickreels') {
-          await fetch(`${BACKEND_API_BASE_URL}/proxy/warmup?url=${encodeURIComponent(videoData)}`);
-          setVideoUrl(buildProxyUrl(videoData, 'https://www.flickreels.com/'));
+          setVideoUrl(getDirectUrl(videoData));
           return;
         }
         if (source === 'moviebox') {
@@ -381,7 +377,7 @@ export function WatchPage() {
           setIsIframe(false);
           return;
         }
-        setVideoUrl(buildProxyUrl(videoData));
+        setVideoUrl(getDirectUrl(videoData));
         return;
       }
     } catch (error) {
