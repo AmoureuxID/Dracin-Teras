@@ -51,6 +51,12 @@ Di kode:
   - Mode: DIRECT
   - Dipakai di: `fetchAnimeList`
   - Parse utama: `data.list`
+- `GET /anime/samehadaku/episode/{episodeId}`
+ 
+  - Dip - Mode: DIRECTakai di: WatchPage (streaming)
+- `GET /anime/samehadaku/server/{serverId}`
+  - Mode: DIRECT
+  - Dipakai di: WatchPage (streaming)
 
 ### Komik (HYBRID, currently DIRECT)
 

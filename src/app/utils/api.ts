@@ -492,7 +492,7 @@ export async function fetchDramaBoxLatest(page: number = 1): Promise<Drama[]> {
 
 export async function fetchDramaBoxRandom(): Promise<Drama[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/dramabox/random`, {
+    const response = await fetch(`${API_BASE_URL}/dramabox/randomdrama`, {
       mode: 'cors',
     });
     if (!response.ok) throw new Error('API not available');
